@@ -11,16 +11,27 @@
     "directory": "mcp-server"
   },
   "keywords": ["mcp", "model-context-protocol", "llm", "tokens", "tiktoken", "cost", "openai", "anthropic", "gemini"],
+  "homepage": "https://github.com/waqarulwahab/llm-cost-estimator/tree/main/mcp-server#readme",
+  "bugs": {
+    "url": "https://github.com/waqarulwahab/llm-cost-estimator/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "bin": {
     "llm-cost-estimator-mcp": "dist/index.js"
   },
   "files": ["dist", "README.md"],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "node build.mjs",
     "build:prod": "node build.mjs --production",
     "typecheck": "tsc --noEmit",
     "start": "node dist/index.js",
-    "test": "node build.mjs && node scripts/mcp-test.mjs"
+    "test": "node build.mjs && node scripts/mcp-test.mjs",
+    "prepublishOnly": "node build.mjs --production"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
