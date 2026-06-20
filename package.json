@@ -111,6 +111,7 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "vitest run",
     "test:watch": "vitest",
+    "smoke": "node esbuild.js && node scripts/smoke.js",
     "typecheck": "tsc --noEmit",
     "generate-icon": "node scripts/generate-icon.js",
     "vsce:package": "vsce package"
