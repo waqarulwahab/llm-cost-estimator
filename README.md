@@ -2,6 +2,7 @@
 
 > See how many tokens your prompt uses — and what it'll cost on **GPT-4o vs. Claude vs. Gemini** — right inside VS Code. No API key, no billing dashboard, no guessing.
 
+[![CI](https://github.com/waqarulwahab/llm-cost-estimator/actions/workflows/ci.yml/badge.svg)](https://github.com/waqarulwahab/llm-cost-estimator/actions/workflows/ci.yml)
 [![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -254,19 +255,20 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Packaging & publishing
 
-This extension is bundled with [esbuild](https://esbuild.github.io/) and packaged
-with [`@vscode/vsce`](https://github.com/microsoft/vscode-vsce).
+The extension is bundled with [esbuild](https://esbuild.github.io/) and packaged
+with [`@vscode/vsce`](https://github.com/microsoft/vscode-vsce); the MCP server is
+published to npm. Both are automated via GitHub Actions on a version tag.
 
 ```bash
 npm run package       # production bundle -> dist/extension.js
-npm run vsce:package  # create the .vsix (vsce package)
-npx vsce publish      # publish to the Marketplace (requires a publisher + PAT)
+npm run vsce:package  # create the .vsix
+npm run mcp:build     # build the MCP server
+npm run mcp:test      # build + stdio end-to-end test the MCP server
 ```
 
-Before publishing, set a real `publisher` in `package.json` and create a
-[Marketplace publisher](https://code.visualstudio.com/api/working-with-extensions/publishing-extension)
-with a Personal Access Token. The icon lives at `images/icon.png` (regenerate it
-with `npm run generate-icon`).
+👉 **Full step-by-step guide — Marketplace, Open VSX, npm, GitHub Actions,
+secrets, and how end users install each artifact — is in
+[PUBLISHING.md](PUBLISHING.md).**
 
 ---
 
