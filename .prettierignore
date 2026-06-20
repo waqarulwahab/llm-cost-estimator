@@ -1,0 +1,7 @@
+dist
+out
+node_modules
+coverage
+*.vsix
+package-lock.json
+images

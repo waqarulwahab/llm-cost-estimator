@@ -1,0 +1,133 @@
+{
+  "name": "llm-cost-estimator",
+  "displayName": "LLM Cost & Token Estimator",
+  "description": "Inline token counts and multi-model cost estimates (GPT-4o, Claude, Gemini) right in your editor. Local-first, zero config, no API key.",
+  "version": "0.1.0",
+  "publisher": "your-publisher-id",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "llm",
+    "openai",
+    "anthropic",
+    "google",
+    "tokens",
+    "tokenizer",
+    "cost",
+    "pricing",
+    "gpt",
+    "gpt-4o",
+    "claude",
+    "gemini",
+    "tiktoken"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/llm-cost-estimator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/llm-cost-estimator/issues"
+  },
+  "homepage": "https://github.com/your-username/llm-cost-estimator#readme",
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "llmCostEstimator.estimateSelection",
+        "title": "Estimate Selection",
+        "category": "LLM Cost"
+      },
+      {
+        "command": "llmCostEstimator.showLastBreakdown",
+        "title": "Show Last Breakdown",
+        "category": "LLM Cost"
+      },
+      {
+        "command": "llmCostEstimator.resetSessionTotal",
+        "title": "Reset Session Total",
+        "category": "LLM Cost"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "llmCostEstimator.estimateSelection",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste@99"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "LLM Cost & Token Estimator",
+      "properties": {
+        "llmCostEstimator.models": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "gpt-4o",
+            "claude-sonnet",
+            "claude-haiku"
+          ],
+          "markdownDescription": "Models to display in cost comparisons. Each entry must match a key in the bundled `pricing.json` (e.g. `gpt-4o`, `gpt-4o-mini`, `claude-opus`, `claude-sonnet`, `claude-haiku`, `gemini-1.5-pro`, `gemini-1.5-flash`)."
+        },
+        "llmCostEstimator.outputTokenAssumption": {
+          "type": "number",
+          "default": 500,
+          "minimum": 0,
+          "markdownDescription": "Assumed number of output (completion) tokens used when estimating total cost. Output pricing is typically higher than input pricing, so this materially affects the total. The assumption is always shown in the tooltip."
+        },
+        "llmCostEstimator.currency": {
+          "type": "string",
+          "default": "USD",
+          "markdownDescription": "Currency label shown next to costs. Pricing in `pricing.json` is expressed in USD; this setting only changes the displayed label/symbol and does **not** perform conversion."
+        },
+        "llmCostEstimator.enableHover": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show a hover tooltip with token counts and multi-model cost comparison when hovering over a selection or a string literal."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "lint": "eslint src --ext ts",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "generate-icon": "node scripts/generate-icon.js",
+    "vsce:package": "vsce package"
+  },
+  "dependencies": {
+    "js-tiktoken": "^1.0.21"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.0",
+    "@types/vscode": "^1.125.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vscode/vsce": "^2.32.0",
+    "esbuild": "^0.23.1",
+    "eslint": "^8.57.1",
+    "prettier": "^3.8.4",
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  }
+}
