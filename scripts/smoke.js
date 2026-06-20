@@ -77,14 +77,35 @@ class Disposable {
     if (this._fn) this._fn();
   }
 }
+class Selection {
+  constructor(anchor, active) {
+    this.anchor = anchor;
+    this.active = active;
+    this.start = anchor;
+    this.end = active;
+  }
+}
+
+// Virtual workspace for the scan command.
+const VFS = {
+  "/proj/a.ts": 'const systemPrompt = "You are a careful, concise assistant for developers.";\nconst x = "hi";',
+  "/proj/b.ts": 'const userMessage = "Summarize the following article in three short bullet points please.";',
+  "/proj/readme.md": "# notes\njust prose, no quoted prompts here",
+};
+function makeUri(p) {
+  return { path: p, fsPath: p, toString: () => "file://" + p };
+}
 
 const vscode = {
   StatusBarAlignment: { Left: 1, Right: 2 },
   QuickPickItemKind: { Separator: -1, Default: 0 },
   ViewColumn: { Active: -1, Beside: -2, One: 1 },
   ConfigurationTarget: { Global: 1, Workspace: 2, WorkspaceFolder: 3 },
+  ProgressLocation: { Notification: 15, Window: 10, SourceControl: 1 },
+  TextEditorRevealType: { Default: 0, InCenter: 1 },
   Position,
   Range,
+  Selection,
   MarkdownString,
   Hover,
   CodeLens,
@@ -165,6 +186,15 @@ const vscode = {
     onDidChangeActiveTextEditor() {
       return { dispose() {} };
     },
+    async withProgress(_opts, task) {
+      return task({ report() {} }, { isCancellationRequested: false });
+    },
+    async showTextDocument() {
+      return {
+        selection: undefined,
+        revealRange() {},
+      };
+    },
   },
   commands: {
     registerCommand(id, cb) {
@@ -191,6 +221,15 @@ const vscode = {
         enableHover: true,
         enableCodeLens: true,
         enableStatusBarSelection: true,
+        customModels: {
+          "corp-gpt": {
+            label: "Corp GPT",
+            provider: "openai",
+            inputPer1M: 1,
+            outputPer1M: 2,
+            contextWindow: 64000,
+          },
+        },
       };
       return {
         get: (key, dflt) => (key in values ? values[key] : dflt),
@@ -202,6 +241,23 @@ const vscode = {
     },
     onDidChangeConfiguration() {
       return { dispose() {} };
+    },
+    async findFiles() {
+      return Object.keys(VFS).map(makeUri);
+    },
+    asRelativePath(uri) {
+      return (uri.path || "").replace(/^\/proj\//, "");
+    },
+    async openTextDocument() {
+      return { getText: () => "" };
+    },
+    fs: {
+      async stat(uri) {
+        return { size: Buffer.byteLength(VFS[uri.path] || "", "utf8") };
+      },
+      async readFile(uri) {
+        return new Uint8Array(Buffer.from(VFS[uri.path] || "", "utf8"));
+      },
     },
   },
   env: {
@@ -288,6 +344,8 @@ async function main() {
     "llmCostEstimator.estimateText",
     "llmCostEstimator.openComparisonPanel",
     "llmCostEstimator.selectModels",
+    "llmCostEstimator.scanWorkspace",
+    "llmCostEstimator.copyComparison",
     "llmCostEstimator.showLastBreakdown",
     "llmCostEstimator.resetSessionTotal",
   ]) {
@@ -365,7 +423,41 @@ async function main() {
       dataMsg.models.every((m) => typeof m.inputTokens === "number" && m.inputPer1M >= 0),
       "panel data has tokens + pricing per model",
     );
-    console.log("  panel models compared:", dataMsg.models.length);
+    // Custom model from settings should be merged into the catalog.
+    assert(
+      dataMsg.models.some((m) => m.key === "corp-gpt"),
+      "custom model (corp-gpt) should appear in the catalog",
+    );
+    console.log("  panel models compared:", dataMsg.models.length, "(incl. custom corp-gpt)");
+  }
+
+  // --- Workspace scan ---
+  {
+    await registeredCommands.get("llmCostEstimator.scanWorkspace")();
+    const dataMsg = lastWebviewPanel._posted.find((m) => m.type === "data" && "totalPrompts" in m);
+    assert(dataMsg, "scan should post a report to the webview");
+    assert(dataMsg.totalPrompts >= 2, `scan should find prompts (${dataMsg.totalPrompts})`);
+    assert(dataMsg.files.length >= 2, "scan report lists files with prompts");
+    console.log(
+      "  scan:",
+      dataMsg.filesScanned,
+      "files,",
+      dataMsg.totalPrompts,
+      "prompts,",
+      dataMsg.totalTokens,
+      "tokens",
+    );
+  }
+
+  // --- Copy comparison as Markdown ---
+  {
+    const text = "Translate the following paragraph into formal French, preserving tone.";
+    const doc = fakeDocument(text);
+    vscode.window.activeTextEditor = { document: doc, selection: fullSelection(text) };
+    clip.text = "";
+    await registeredCommands.get("llmCostEstimator.copyComparison")();
+    assert(/\| Model \|/.test(clip.text), "copyComparison should put a Markdown table on the clipboard");
+    console.log("  clipboard markdown bytes:", clip.text.length);
   }
 
   // --- Estimate clipboard ---
@@ -407,7 +499,10 @@ async function main() {
   }
 
   ext.deactivate();
-  console.log("\n✓ smoke test passed: commands, hover, codelens, panel, clipboard, selectModels, live status bar");
+  console.log(
+    "\n✓ e2e passed: commands, hover, codelens, comparison panel, custom models, workspace scan,",
+    "copy-as-markdown, clipboard, selectModels, live status bar",
+  );
 }
 
 main().catch((err) => {

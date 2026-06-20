@@ -1,15 +1,29 @@
 import * as vscode from "vscode";
 import { estimate } from "./core/estimator";
+import { setCustomModels } from "./pricing/pricing";
 import { estimateSelection } from "./commands/estimateSelection";
 import { estimateAndShow } from "./commands/estimateText";
 import { estimateClipboard } from "./commands/estimateClipboard";
 import { selectModels } from "./commands/selectModels";
+import { scanWorkspace } from "./commands/scanWorkspace";
+import { copyComparison } from "./commands/copyComparison";
 import { readSettings } from "./settings";
 import { LlmCostHoverProvider } from "./ui/hoverProvider";
 import { LlmCostCodeLensProvider } from "./ui/codeLensProvider";
 import { ComparisonPanel } from "./ui/comparisonPanel";
 import { showEstimateQuickPick } from "./ui/quickPick";
 import { StatusBarManager } from "./ui/statusBar";
+
+/** Loads user-defined models from settings into the pricing table. */
+function applyCustomModels(): void {
+  const raw = vscode.workspace.getConfiguration("llmCostEstimator").get("customModels");
+  const { errors } = setCustomModels(raw);
+  if (errors.length > 0) {
+    vscode.window.showWarningMessage(
+      `LLM Cost: ignored invalid custom model(s) in "llmCostEstimator.customModels": ${errors.join(", ")}.`,
+    );
+  }
+}
 
 // Hover works in prose/config files too; CodeLens only where prompts live in code.
 const HOVER_LANGUAGES = [
@@ -36,6 +50,8 @@ const LIVE_DEBOUNCE_MS = 120;
 const LIVE_SELECTION_CAP = 50_000; // chars; above this, live status bar stays idle
 
 export function activate(context: vscode.ExtensionContext): void {
+  applyCustomModels();
+
   const statusBar = new StatusBarManager();
   const codeLensProvider = new LlmCostCodeLensProvider(readSettings);
   context.subscriptions.push(statusBar, codeLensProvider);
@@ -80,6 +96,12 @@ export function activate(context: vscode.ExtensionContext): void {
       ComparisonPanel.show(readSettings),
     ),
     vscode.commands.registerCommand("llmCostEstimator.selectModels", () => selectModels()),
+    vscode.commands.registerCommand("llmCostEstimator.scanWorkspace", () =>
+      scanWorkspace(readSettings),
+    ),
+    vscode.commands.registerCommand("llmCostEstimator.copyComparison", () =>
+      copyComparison(statusBar),
+    ),
     vscode.commands.registerCommand("llmCostEstimator.showLastBreakdown", async () => {
       const last = statusBar.getLastResult();
       if (!last) {
@@ -108,6 +130,9 @@ export function activate(context: vscode.ExtensionContext): void {
     }),
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("llmCostEstimator")) {
+        if (e.affectsConfiguration("llmCostEstimator.customModels")) {
+          applyCustomModels();
+        }
         codeLensProvider.refresh();
         runLiveUpdate();
       }
