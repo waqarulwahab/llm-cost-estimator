@@ -1,0 +1,62 @@
+name: Release
+
+# Push a version tag (e.g. v0.3.0) to cut a release. The GitHub Release (with the
+# .vsix attached) is always created. Publishing to the Marketplace, Open VSX, and
+# npm only happens if the matching secret is configured — so this is safe to run
+# even before you've set those up.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - run: npm ci
+      - name: Verify (lint · typecheck · test · e2e)
+        run: |
+          npm run lint
+          npm run typecheck
+          npm test
+          npm run e2e
+
+      - name: Package VSIX
+        run: npx @vscode/vsce package --no-dependencies
+
+      - name: Create GitHub Release (attach VSIX)
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.vsix"
+          generate_release_notes: true
+
+      - name: Publish to VS Code Marketplace
+        if: ${{ env.VSCE_PAT != '' }}
+        run: npx @vscode/vsce publish --no-dependencies -p "$VSCE_PAT"
+
+      - name: Publish to Open VSX
+        if: ${{ env.OVSX_PAT != '' }}
+        run: npx ovsx publish *.vsix -p "$OVSX_PAT"
+
+      - name: Publish MCP server to npm
+        if: ${{ env.NPM_TOKEN != '' }}
+        working-directory: mcp-server
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npm ci
+          npm test
+          npm publish --access public
