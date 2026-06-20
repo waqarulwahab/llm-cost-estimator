@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import type { EstimateResult } from "../core/estimator";
-import { formatCost } from "../core/format";
+import { formatCost, formatTokens } from "../core/format";
+import { renderComparisonMarkdown, sortByCost } from "./markdown";
 
 interface RunningTotal {
   label: string;
@@ -9,13 +10,15 @@ interface RunningTotal {
 }
 
 /**
- * Owns the status bar item showing a running cost total for the session. The
- * "headline" figure is the first configured model's cumulative total; the
- * tooltip breaks the total down per model. Clicking re-opens the last
- * breakdown via the `showLastBreakdown` command.
+ * Owns the status bar item. It has two modes:
  *
- * Only explicit estimates (the command) feed the total — hovering does not, so
- * the figure reflects deliberate measurements rather than incidental mouseovers.
+ *  - **Live** — while text is selected, it shows that selection's token count
+ *    and cost (cheapest configured model) with a full comparison in the tooltip.
+ *    Updated by the debounced selection listener.
+ *  - **Session total** — with no selection, it shows a running total accumulated
+ *    by the explicit `Estimate Selection` command (hovering never adds to it).
+ *
+ * Clicking opens the Comparison Panel.
  */
 export class StatusBarManager implements vscode.Disposable {
   private readonly item: vscode.StatusBarItem;
@@ -24,15 +27,25 @@ export class StatusBarManager implements vscode.Disposable {
   private estimateCount = 0;
   private currency = "USD";
   private lastResult: EstimateResult | undefined;
+  private live: EstimateResult | null = null;
 
   constructor() {
     this.item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    this.item.command = "llmCostEstimator.showLastBreakdown";
+    this.item.command = "llmCostEstimator.openComparisonPanel";
     this.render();
     this.item.show();
   }
 
-  /** Records an estimate into the running session totals and refreshes the badge. */
+  /** Sets (or clears) the live selection estimate shown in the bar. */
+  setLive(result: EstimateResult | null): void {
+    this.live = result && result.estimates.length > 0 ? result : null;
+    if (this.live) {
+      this.currency = this.live.currency;
+    }
+    this.render();
+  }
+
+  /** Records an explicit estimate into the running session totals. */
   record(result: EstimateResult): void {
     if (result.estimates.length === 0) {
       return;
@@ -41,7 +54,6 @@ export class StatusBarManager implements vscode.Disposable {
     this.currency = result.currency;
     this.estimateCount += 1;
     this.headlineModel = result.estimates[0].model;
-
     for (const e of result.estimates) {
       const prev = this.totals.get(e.model);
       this.totals.set(e.model, {
@@ -68,6 +80,19 @@ export class StatusBarManager implements vscode.Disposable {
   }
 
   private render(): void {
+    if (this.live) {
+      const cheapest = sortByCost(this.live.estimates)[0];
+      const prefix = cheapest.isEstimate ? "~" : "";
+      this.item.text =
+        `$(symbol-number) ${formatTokens(cheapest.inputTokens)} tok · ` +
+        `${prefix}${formatCost(cheapest.totalCost, this.currency)}`;
+      this.item.tooltip = renderComparisonMarkdown(this.live, {
+        heading: "LLM Cost — current selection",
+        footer: "_Click to open the Comparison Panel._",
+      });
+      return;
+    }
+
     const headline = this.headlineModel ? this.totals.get(this.headlineModel) : undefined;
     if (this.estimateCount === 0 || !headline) {
       this.item.text = "$(symbol-number) LLM Cost";
@@ -75,16 +100,19 @@ export class StatusBarManager implements vscode.Disposable {
       const prefix = headline.isEstimate ? "~" : "";
       this.item.text = `$(graph) ${prefix}${formatCost(headline.total, this.currency)}`;
     }
-    this.item.tooltip = this.buildTooltip();
+    this.item.tooltip = this.buildSessionTooltip();
   }
 
-  private buildTooltip(): vscode.MarkdownString {
+  private buildSessionTooltip(): vscode.MarkdownString {
     const md = new vscode.MarkdownString(undefined, true);
     md.supportThemeIcons = true;
     md.appendMarkdown("**LLM Cost — session total**\n\n");
 
     if (this.estimateCount === 0) {
-      md.appendMarkdown("No estimates yet. Select text and run **LLM Cost: Estimate Selection**.");
+      md.appendMarkdown(
+        "Select text to see a live estimate, or run **LLM Cost: Estimate Selection**.\n\n",
+      );
+      md.appendMarkdown("_Click to open the Comparison Panel._");
       return md;
     }
 
@@ -99,7 +127,7 @@ export class StatusBarManager implements vscode.Disposable {
       );
     }
     md.appendMarkdown("\n★ headline (status bar) · ~ estimated tokenization\n\n");
-    md.appendMarkdown("_Click to show the last breakdown._");
+    md.appendMarkdown("_Click to open the Comparison Panel._");
     return md;
   }
 

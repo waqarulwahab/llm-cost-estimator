@@ -1,13 +1,18 @@
 import * as vscode from "vscode";
-import { estimate, type EstimateResult } from "../core/estimator";
-import { ESTIMATE_MARKER, formatCost, formatTokens } from "../core/format";
+import { estimate } from "../core/estimator";
+import { findStringAt, findStrings } from "../core/detect";
 import type { ExtensionSettings } from "../settings";
+import { renderComparisonMarkdown } from "./markdown";
+
+// Above this document size we only scan the hovered line (not the whole file)
+// to keep hovers instant.
+const WHOLE_DOC_SCAN_LIMIT = 200_000;
 
 /**
  * Shows token counts and a multi-model cost comparison when hovering over a
- * selection or a string literal. This is the primary, delightful interaction.
+ * selection or a string literal. The primary, delightful interaction.
  *
- * To stay fast we only tokenize the small hovered range — never the whole file.
+ * Only the small hovered range is tokenized — never the whole file.
  */
 export class LlmCostHoverProvider implements vscode.HoverProvider {
   constructor(private readonly getSettings: () => ExtensionSettings) {}
@@ -31,7 +36,10 @@ export class LlmCostHoverProvider implements vscode.HoverProvider {
       return undefined;
     }
 
-    return new vscode.Hover(renderHoverMarkdown(result), target.range);
+    return new vscode.Hover(
+      renderComparisonMarkdown(result, { heading: "LLM Cost Estimate" }),
+      target.range,
+    );
   }
 }
 
@@ -53,95 +61,40 @@ function resolveHoverTarget(
     }
   }
 
-  // 2) Otherwise, a string literal under the cursor.
-  return findStringLiteral(document, position);
+  // 2) Otherwise, the string literal under the cursor.
+  return findStringTarget(document, position);
 }
 
-function findStringLiteral(
+function findStringTarget(
   document: vscode.TextDocument,
   position: vscode.Position,
 ): HoverTarget | undefined {
-  const line = document.lineAt(position.line).text;
-  const found = scanStringOnLine(line, position.character);
-  if (!found) {
-    return undefined;
-  }
-  const range = new vscode.Range(
-    position.line,
-    found.contentStart,
-    position.line,
-    found.contentEnd,
-  );
-  return { text: found.content, range };
-}
-
-/**
- * Naive single-line string scanner: finds a quoted span (', ", or `) that
- * contains the character offset `ch` and returns its inner content. Good enough
- * for hovering prompt strings; multi-line template literals fall back to no hover.
- */
-function scanStringOnLine(
-  line: string,
-  ch: number,
-): { contentStart: number; contentEnd: number; content: string } | undefined {
-  const quotes = new Set(["'", '"', "`"]);
-  let i = 0;
-  while (i < line.length) {
-    if (quotes.has(line[i])) {
-      const quote = line[i];
-      let j = i + 1;
-      while (j < line.length) {
-        if (line[j] === "\\") {
-          j += 2;
-          continue;
-        }
-        if (line[j] === quote) {
-          break;
-        }
-        j += 1;
-      }
-      if (j >= line.length) {
-        break; // unterminated string — give up
-      }
-      // The string occupies [i .. j] inclusive of quotes; hover hits if inside.
-      if (ch > i && ch <= j) {
-        return { contentStart: i + 1, contentEnd: j, content: line.slice(i + 1, j) };
-      }
-      i = j + 1;
-      continue;
+  // Whole-document scan handles multi-line template literals, but is bounded for
+  // performance; very large files fall back to a single-line scan.
+  if (document.getText().length <= WHOLE_DOC_SCAN_LIMIT) {
+    const span = findStringAt(document.getText(), document.offsetAt(position));
+    if (!span) {
+      return undefined;
     }
-    i += 1;
+    const range = new vscode.Range(
+      document.positionAt(span.contentStart),
+      document.positionAt(span.contentEnd),
+    );
+    return { text: span.content, range };
+  }
+
+  // Large-file fallback: scan just the current line.
+  const lineText = document.lineAt(position.line).text;
+  for (const span of findStrings(lineText)) {
+    if (position.character >= span.contentStart && position.character <= span.contentEnd) {
+      const range = new vscode.Range(
+        position.line,
+        span.contentStart,
+        position.line,
+        span.contentEnd,
+      );
+      return { text: span.content, range };
+    }
   }
   return undefined;
-}
-
-function renderHoverMarkdown(result: EstimateResult): vscode.MarkdownString {
-  const md = new vscode.MarkdownString(undefined, true);
-  md.supportThemeIcons = true;
-  md.appendMarkdown("**LLM Cost Estimate**\n\n");
-
-  const currency = result.currency;
-  md.appendMarkdown("| Model | Tokens | Input | Total\\* |\n|---|---:|---:|---:|\n");
-  for (const e of result.estimates) {
-    const labelMark = e.isEstimate ? ` ${ESTIMATE_MARKER}` : "";
-    const totalPrefix = e.isEstimate ? ESTIMATE_MARKER : "";
-    md.appendMarkdown(
-      `| ${e.label}${labelMark} | ${formatTokens(e.inputTokens)} | ` +
-        `${formatCost(e.inputCost, currency)} | ${totalPrefix}${formatCost(e.totalCost, currency)} |\n`,
-    );
-  }
-
-  md.appendMarkdown(
-    `\n\\* Total = input + **${formatTokens(result.outputTokenAssumption)}** assumed output tokens.\n`,
-  );
-  if (result.estimates.some((e) => e.isEstimate)) {
-    md.appendMarkdown(
-      `\n${ESTIMATE_MARKER} Anthropic/Google token counts are **estimates** ` +
-        `(no exact local tokenizer; approximated via an OpenAI encoding).\n`,
-    );
-  }
-  if (result.unknownModels.length > 0) {
-    md.appendMarkdown(`\n_Skipped unknown models: ${result.unknownModels.join(", ")}._\n`);
-  }
-  return md;
 }
