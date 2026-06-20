@@ -41,6 +41,14 @@ _A short GIF showing the hover tooltip and the status bar in action goes here._
   Panel`, and `Select Models to Compare`.
 - **🗂 25+ models** — GPT-4o/4.1/o-series, Claude 4/3.7/3.5, Gemini 2.5/2.0/1.5,
   DeepSeek, Mistral, Llama, Grok. Pick what you care about.
+- **📁 Workspace scan** — one command finds every prompt in your project and
+  reports the total estimated cost per run, with a clickable per-file breakdown.
+- **➕ Custom models** — add your own models/prices (or a negotiated rate) in
+  settings; no need to edit bundled files.
+- **⚠️ Context-window warnings** — a `⚠` appears when a prompt exceeds a model's
+  context window.
+- **📋 Copy as Markdown** — drop a ready-to-paste comparison table on your
+  clipboard.
 - **🔒 Local-first, zero config** — exact OpenAI tokenization runs entirely on
   your machine; pricing is bundled. No network calls, no API key.
 
@@ -66,7 +74,7 @@ _A short GIF showing the hover tooltip and the status bar in action goes here._
 **From a `.vsix`:**
 
 ```bash
-code --install-extension llm-cost-estimator-0.2.0.vsix
+code --install-extension llm-cost-estimator-0.3.0.vsix
 ```
 
 **From source (for development):** see [Contributing](#contributing).
@@ -88,6 +96,8 @@ code --install-extension llm-cost-estimator-0.2.0.vsix
     selected. Also on the editor right-click menu.
   - **LLM Cost: Estimate Clipboard** — estimate whatever you've copied.
   - **LLM Cost: Open Comparison Panel** — the visual dashboard.
+  - **LLM Cost: Scan Workspace for Prompts** — project-wide prompt cost report.
+  - **LLM Cost: Copy Comparison as Markdown** — table to clipboard.
   - **LLM Cost: Select Models to Compare** — pick models from the catalog.
   - **LLM Cost: Reset Session Total** — clear the running total.
 
@@ -112,6 +122,7 @@ All settings live under `llmCostEstimator.*`:
 | `llmCostEstimator.enableHover` | `boolean` | `true` | Show the hover tooltip. |
 | `llmCostEstimator.enableCodeLens` | `boolean` | `true` | Show a CodeLens above detected prompt strings (JS/TS/Python). |
 | `llmCostEstimator.enableStatusBarSelection` | `boolean` | `true` | Show the live token count + cost of the current selection in the status bar. |
+| `llmCostEstimator.customModels` | `object` | `{}` | Add or override models without editing `pricing.json` (see [Custom models](#custom-models)). |
 
 **Available model keys** (out of the box) — run **LLM Cost: Select Models to
 Compare** to pick from these visually:
@@ -134,6 +145,29 @@ Example `settings.json`:
   "llmCostEstimator.currency": "USD"
 }
 ```
+
+### Custom models
+
+Add your own models — or override a built-in price with a negotiated rate —
+without touching the bundled files, via `llmCostEstimator.customModels`:
+
+```jsonc
+{
+  "llmCostEstimator.customModels": {
+    "my-finetune": {
+      "label": "My Fine-tune",
+      "provider": "openai", // "openai" = exact tokenization; anything else = estimate
+      "inputPer1M": 1.0,
+      "outputPer1M": 2.0,
+      "contextWindow": 128000 // optional, enables the ⚠ over-limit warning
+    },
+    "gpt-4o": { "label": "GPT-4o (our rate)", "provider": "openai", "inputPer1M": 2.0, "outputPer1M": 8.0 }
+  }
+}
+```
+
+Then add the key to `llmCostEstimator.models` (or pick it via **Select Models to
+Compare**). Invalid entries are reported and skipped, not silently dropped.
 
 ## Updating pricing
 
@@ -179,11 +213,12 @@ git clone https://github.com/your-username/llm-cost-estimator.git
 cd llm-cost-estimator
 npm install
 
-npm test          # run unit tests (Vitest)
-npm run smoke     # bundle + smoke-test the extension against a mocked VS Code
-npm run lint      # ESLint
-npm run typecheck # tsc --noEmit
-npm run compile   # bundle to dist/ with esbuild
+npm test           # run unit + load tests (Vitest)
+npm run test:load  # just the load/performance suite
+npm run e2e        # bundle + end-to-end test against a mocked VS Code
+npm run lint       # ESLint
+npm run typecheck  # tsc --noEmit
+npm run compile    # bundle to dist/ with esbuild
 ```
 
 Then press **F5** in VS Code to launch the **Extension Development Host** and try
@@ -195,8 +230,8 @@ your changes live.
 src/
   tokenizer/   # Tokenizer interface + per-provider implementations
   pricing/     # pricing.json + lookup & cost math
-  core/        # estimator (pure, VS Code-free) + formatting
-  ui/          # hover provider, status bar, QuickPick
+  core/        # estimator, prompt detector, workspace scan, export, formatting (all pure)
+  ui/          # hover, status bar, CodeLens, QuickPick, comparison + scan webviews
   commands/    # command handlers
   extension.ts # activate() / deactivate()
 test/          # Vitest unit tests for the core logic

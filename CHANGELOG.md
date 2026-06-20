@@ -4,6 +4,33 @@ All notable changes to this extension are documented here. This project follows
 [Semantic Versioning](https://semver.org/) and the
 [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [0.3.0] - 2026-06-21
+
+Power-user features and project-wide visibility.
+
+### Added
+
+- **Workspace scan** (`LLM Cost: Scan Workspace for Prompts`) — finds every
+  prompt-like string across the project and shows an aggregated report: total
+  estimated cost per run, prompts, tokens, and a per-file table. Click a file to
+  jump straight to its first prompt.
+- **Custom models** via the `llmCostEstimator.customModels` setting — add or
+  override models (label, provider, prices, encoding, context window) without
+  editing `pricing.json`. Invalid entries are reported, not silently dropped.
+- **Context-window awareness** — a `⚠` marker appears in hovers, the CodeLens,
+  the panel, and exports when a prompt + assumed output exceeds a model's window.
+- **Copy comparison as Markdown** (`LLM Cost: Copy Comparison as Markdown`, plus
+  a button in the panel) — drops a ready-to-paste table on your clipboard.
+
+### Testing
+
+- Added a **load/performance suite** (`npm run test:load`) covering 1 MB inputs,
+  the full-catalog encoding cache, 5,000-string detection, pathological input,
+  500-file scans, and 2,000-estimate throughput — all with regression-catching
+  time budgets.
+- Expanded the **end-to-end harness** (`npm run e2e`) to exercise every command,
+  the workspace scan, custom models, and copy-as-Markdown against the bundle.
+
 ## [0.2.0] - 2026-06-21
 
 A big step up from the MVP — focused on discoverability and "wow".
@@ -61,5 +88,6 @@ Initial release — the MVP.
 - **Bundled, editable pricing** in `src/pricing/pricing.json` with a "verify
   prices" note.
 
+[0.3.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.3.0
 [0.2.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.2.0
 [0.1.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.1.0

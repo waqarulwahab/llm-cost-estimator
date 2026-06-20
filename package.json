@@ -2,7 +2,7 @@
   "name": "llm-cost-estimator",
   "displayName": "LLM Cost & Token Estimator",
   "description": "Inline token counts and multi-model cost estimates (GPT-4o, Claude, Gemini) right in your editor. Local-first, zero config, no API key.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "your-publisher-id",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -64,6 +64,17 @@
         "category": "LLM Cost"
       },
       {
+        "command": "llmCostEstimator.scanWorkspace",
+        "title": "Scan Workspace for Prompts",
+        "category": "LLM Cost",
+        "icon": "$(search)"
+      },
+      {
+        "command": "llmCostEstimator.copyComparison",
+        "title": "Copy Comparison as Markdown",
+        "category": "LLM Cost"
+      },
+      {
         "command": "llmCostEstimator.showLastBreakdown",
         "title": "Show Last Breakdown",
         "category": "LLM Cost"
@@ -95,6 +106,11 @@
         {
           "command": "llmCostEstimator.openComparisonPanel",
           "group": "9_cutcopypaste@99"
+        },
+        {
+          "command": "llmCostEstimator.copyComparison",
+          "when": "editorHasSelection",
+          "group": "9_cutcopypaste@100"
         }
       ],
       "editor/title": [
@@ -144,6 +160,23 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "When text is selected, show its live token count and cost in the status bar (cheapest configured model; full comparison in the tooltip)."
+        },
+        "llmCostEstimator.customModels": {
+          "type": "object",
+          "default": {},
+          "markdownDescription": "Add or override models without editing `pricing.json`. Keys are model aliases; values are `{ \"label\", \"provider\", \"inputPer1M\", \"outputPer1M\", \"encoding\"?, \"contextWindow\"? }`. `provider: \"openai\"` is tokenized exactly; any other provider is an estimate. Example: `{ \"my-llm\": { \"label\": \"My LLM\", \"provider\": \"openai\", \"inputPer1M\": 1, \"outputPer1M\": 2 } }`.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "label": { "type": "string" },
+              "provider": { "type": "string" },
+              "encoding": { "type": "string", "enum": ["o200k_base", "cl100k_base"] },
+              "inputPer1M": { "type": "number" },
+              "outputPer1M": { "type": "number" },
+              "contextWindow": { "type": "number" }
+            },
+            "required": ["provider", "inputPer1M", "outputPer1M"]
+          }
         }
       }
     }
@@ -158,7 +191,9 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:load": "vitest run test/load.test.ts",
     "smoke": "node esbuild.js && node scripts/smoke.js",
+    "e2e": "node esbuild.js && node scripts/smoke.js",
     "typecheck": "tsc --noEmit",
     "generate-icon": "node scripts/generate-icon.js",
     "vsce:package": "vsce package"
