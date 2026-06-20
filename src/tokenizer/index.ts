@@ -28,10 +28,7 @@ export interface Tokenizer {
  * OpenAI (real BPE); the estimate-based providers ignore it and use a fixed
  * proxy encoding internally.
  */
-export function getTokenizer(
-  provider: Provider,
-  encoding: EncodingName = "o200k_base",
-): Tokenizer {
+export function getTokenizer(provider: Provider, encoding: EncodingName = "o200k_base"): Tokenizer {
   switch (provider) {
     case "openai":
       return new OpenAITokenizer(encoding);

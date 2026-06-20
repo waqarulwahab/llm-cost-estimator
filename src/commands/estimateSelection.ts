@@ -19,9 +19,7 @@ export async function estimateSelection(statusBar: StatusBarManager): Promise<vo
   }
 
   const selection = editor.selection;
-  const text = selection.isEmpty
-    ? editor.document.getText()
-    : editor.document.getText(selection);
+  const text = selection.isEmpty ? editor.document.getText() : editor.document.getText(selection);
 
   if (!text.trim()) {
     vscode.window.showInformationMessage("LLM Cost: nothing to estimate (selection is empty).");

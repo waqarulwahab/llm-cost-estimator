@@ -66,7 +66,12 @@ function findStringLiteral(
   if (!found) {
     return undefined;
   }
-  const range = new vscode.Range(position.line, found.contentStart, position.line, found.contentEnd);
+  const range = new vscode.Range(
+    position.line,
+    found.contentStart,
+    position.line,
+    found.contentEnd,
+  );
   return { text: found.content, range };
 }
 

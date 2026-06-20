@@ -7,7 +7,13 @@ import { StatusBarManager } from "./ui/statusBar";
 
 // Languages where prompt/string hovers are most useful. Kept intentionally small
 // to start; users building LLM apps mostly work in these.
-const HOVER_LANGUAGES = ["javascript", "javascriptreact", "typescript", "typescriptreact", "python"];
+const HOVER_LANGUAGES = [
+  "javascript",
+  "javascriptreact",
+  "typescript",
+  "typescriptreact",
+  "python",
+];
 
 export function activate(context: vscode.ExtensionContext): void {
   const statusBar = new StatusBarManager();

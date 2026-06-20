@@ -84,9 +84,7 @@ export class StatusBarManager implements vscode.Disposable {
     md.appendMarkdown("**LLM Cost — session total**\n\n");
 
     if (this.estimateCount === 0) {
-      md.appendMarkdown(
-        "No estimates yet. Select text and run **LLM Cost: Estimate Selection**.",
-      );
+      md.appendMarkdown("No estimates yet. Select text and run **LLM Cost: Estimate Selection**.");
       return md;
     }
 
@@ -96,7 +94,9 @@ export class StatusBarManager implements vscode.Disposable {
     for (const [model, t] of this.totals) {
       const estMark = t.isEstimate ? " ~" : "";
       const headlineMark = model === this.headlineModel ? " ★" : "";
-      md.appendMarkdown(`| ${t.label}${estMark}${headlineMark} | ${formatCost(t.total, this.currency)} |\n`);
+      md.appendMarkdown(
+        `| ${t.label}${estMark}${headlineMark} | ${formatCost(t.total, this.currency)} |\n`,
+      );
     }
     md.appendMarkdown("\n★ headline (status bar) · ~ estimated tokenization\n\n");
     md.appendMarkdown("_Click to show the last breakdown._");
