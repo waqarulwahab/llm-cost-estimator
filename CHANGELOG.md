@@ -4,6 +4,40 @@ All notable changes to this extension are documented here. This project follows
 [Semantic Versioning](https://semver.org/) and the
 [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [0.2.0] - 2026-06-21
+
+A big step up from the MVP — focused on discoverability and "wow".
+
+### Added
+
+- **CodeLens on prompts** — a token-count + cost lens above detected prompt
+  strings in JavaScript/TypeScript/Python. Click it for the full breakdown.
+  Toggle with `llmCostEstimator.enableCodeLens`.
+- **Live, selection-aware status bar** — select any text and its token count and
+  cheapest cost appear instantly (no command needed); the tooltip shows every
+  configured model. Toggle with `llmCostEstimator.enableStatusBarSelection`.
+- **Comparison Panel** (`LLM Cost: Open Comparison Panel`) — a themed webview
+  dashboard comparing the **whole model catalog** with a live **output-token
+  slider** (costs recompute instantly, client-side), sortable columns, and a
+  "configured models only" filter. Also reachable from the editor toolbar icon
+  and by clicking the status bar.
+- **`LLM Cost: Estimate Clipboard`** and **`LLM Cost: Select Models to Compare`**
+  commands.
+- **Expanded model catalog (25+):** GPT-4.1 / o-series, Claude 4 / 3.7 / 3.5,
+  Gemini 2.5 / 2.0, DeepSeek, Mistral, Llama, and Grok — alongside the originals.
+- **More hover languages** — Markdown, JSON/JSONC, YAML, and plaintext, in
+  addition to JS/TS/Python.
+- **Multi-line prompt detection** — the hover and CodeLens now understand
+  multi-line template literals.
+
+### Changed
+
+- The status bar now opens the Comparison Panel on click (the QuickPick is still
+  available via `LLM Cost: Show Last Breakdown`).
+- Tokenizer architecture generalized so any provider can be added in
+  `pricing.json` without code changes (OpenAI stays exact; the rest are labeled
+  estimates).
+
 ## [0.1.0] - 2026-06-21
 
 Initial release — the MVP.
@@ -27,4 +61,5 @@ Initial release — the MVP.
 - **Bundled, editable pricing** in `src/pricing/pricing.json` with a "verify
   prices" note.
 
+[0.2.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.2.0
 [0.1.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.1.0

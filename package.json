@@ -2,7 +2,7 @@
   "name": "llm-cost-estimator",
   "displayName": "LLM Cost & Token Estimator",
   "description": "Inline token counts and multi-model cost estimates (GPT-4o, Claude, Gemini) right in your editor. Local-first, zero config, no API key.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "your-publisher-id",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -48,6 +48,22 @@
         "category": "LLM Cost"
       },
       {
+        "command": "llmCostEstimator.openComparisonPanel",
+        "title": "Open Comparison Panel",
+        "category": "LLM Cost",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "llmCostEstimator.estimateClipboard",
+        "title": "Estimate Clipboard",
+        "category": "LLM Cost"
+      },
+      {
+        "command": "llmCostEstimator.selectModels",
+        "title": "Select Models to Compare",
+        "category": "LLM Cost"
+      },
+      {
         "command": "llmCostEstimator.showLastBreakdown",
         "title": "Show Last Breakdown",
         "category": "LLM Cost"
@@ -56,14 +72,35 @@
         "command": "llmCostEstimator.resetSessionTotal",
         "title": "Reset Session Total",
         "category": "LLM Cost"
+      },
+      {
+        "command": "llmCostEstimator.estimateText",
+        "title": "Estimate Text",
+        "category": "LLM Cost"
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "command": "llmCostEstimator.estimateText",
+          "when": "false"
+        }
+      ],
       "editor/context": [
         {
           "command": "llmCostEstimator.estimateSelection",
           "when": "editorHasSelection",
+          "group": "9_cutcopypaste@98"
+        },
+        {
+          "command": "llmCostEstimator.openComparisonPanel",
           "group": "9_cutcopypaste@99"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "llmCostEstimator.openComparisonPanel",
+          "group": "navigation@99"
         }
       ]
     },
@@ -97,6 +134,16 @@
           "type": "boolean",
           "default": true,
           "markdownDescription": "Show a hover tooltip with token counts and multi-model cost comparison when hovering over a selection or a string literal."
+        },
+        "llmCostEstimator.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Show a CodeLens with token count and cost above detected prompt strings (in JavaScript/TypeScript/Python). Click it for the full breakdown."
+        },
+        "llmCostEstimator.enableStatusBarSelection": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "When text is selected, show its live token count and cost in the status bar (cheapest configured model; full comparison in the tooltip)."
         }
       }
     }

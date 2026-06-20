@@ -28,12 +28,19 @@ _A short GIF showing the hover tooltip and the status bar in action goes here._
 
 - **🔀 Multi-model cost comparison** — token count + estimated cost across all
   your configured models, side by side. This is the whole point.
-- **🛈 Hover tooltip** — hover over a selection or a string literal (in JS/TS/
-  Python) to see the comparison inline. The primary, native-feeling interaction.
-- **📊 Status bar running total** — a live, session-long estimated cost total.
-  Click it to re-open the last breakdown.
-- **⌨️ `Estimate Selection` command** — select text, run the command, get a
-  per-model breakdown in a QuickPick. Select a row to copy a summary.
+- **🛈 Hover tooltip** — hover over a selection or a string literal (JS/TS/Python,
+  plus Markdown/JSON/YAML/plaintext) to see the comparison inline.
+- **🔎 CodeLens on prompts** — a token-count + cost lens appears right above
+  detected prompt strings in your code. Click it for the full breakdown.
+- **📊 Live status bar** — select any text and its token count + cost appear in
+  the status bar instantly (no command needed); the tooltip shows every model.
+- **🗔 Comparison Panel** — a visual dashboard comparing the **whole catalog**
+  with a live **output-token slider** (recomputes instantly), sortable columns,
+  and a "configured models only" filter.
+- **⌨️ Commands** — `Estimate Selection`, `Estimate Clipboard`, `Open Comparison
+  Panel`, and `Select Models to Compare`.
+- **🗂 25+ models** — GPT-4o/4.1/o-series, Claude 4/3.7/3.5, Gemini 2.5/2.0/1.5,
+  DeepSeek, Mistral, Llama, Grok. Pick what you care about.
 - **🔒 Local-first, zero config** — exact OpenAI tokenization runs entirely on
   your machine; pricing is bundled. No network calls, no API key.
 
@@ -42,11 +49,11 @@ _A short GIF showing the hover tooltip and the status bar in action goes here._
 - **OpenAI** models use **real** BPE tokenization (`o200k_base` for the GPT-4o
   family, `cl100k_base` for GPT-4 / GPT-3.5) via
   [`js-tiktoken`](https://github.com/dqbd/tiktoken).
-- **Anthropic** and **Google** do not publish reliable local tokenizers, so
-  their counts are **approximated** using an OpenAI encoding and are clearly
-  marked with a `~` and a disclaimer in the UI. They're great for ballpark cost
-  comparison, not for exact billing. (An optional API-based accurate mode is a
-  candidate for a future release.)
+- **Anthropic, Google, and everyone else** (DeepSeek, Mistral, Llama, Grok, …)
+  do not publish reliable local tokenizers, so their counts are **approximated**
+  using an OpenAI encoding and are clearly marked with a `~` and a disclaimer in
+  the UI. They're great for ballpark cost comparison, not for exact billing. (An
+  optional API-based accurate mode is a candidate for a future release.)
 
 ## Install
 
@@ -59,20 +66,30 @@ _A short GIF showing the hover tooltip and the status bar in action goes here._
 **From a `.vsix`:**
 
 ```bash
-code --install-extension llm-cost-estimator-0.1.0.vsix
+code --install-extension llm-cost-estimator-0.2.0.vsix
 ```
 
 **From source (for development):** see [Contributing](#contributing).
 
 ## Usage
 
-- **Hover:** select some text, or simply hover over a string literal, in a JS/TS/
-  Python file. A tooltip shows the per-model token count and cost.
-- **Command:** select text → open the Command Palette (`Ctrl+Shift+P`) →
-  **LLM Cost: Estimate Selection**. With nothing selected, it estimates the
-  whole file. (Also available via the editor right-click menu.)
-- **Status bar:** the running total updates each time you run an estimate. Click
-  it to re-open the last breakdown, or run **LLM Cost: Reset Session Total**.
+- **Hover:** hover over a string literal — or select text — in a supported file.
+  A tooltip shows the per-model token count and cost.
+- **CodeLens:** open a JS/TS/Python file with prompt strings; a `N tokens · ~$X ·
+  compare` lens sits above each one. Click it for the full breakdown.
+- **Live status bar:** select any text — the status bar instantly shows its token
+  count and cheapest cost; hover the item for the full comparison. Click it to
+  open the Comparison Panel.
+- **Comparison Panel:** Command Palette → **LLM Cost: Open Comparison Panel** (or
+  the editor toolbar icon). Drag the **output-token slider** to see costs update
+  live, sort by any column, or filter to your configured models.
+- **Commands** (Command Palette, `Ctrl+Shift+P`):
+  - **LLM Cost: Estimate Selection** — selection, or the whole file if nothing is
+    selected. Also on the editor right-click menu.
+  - **LLM Cost: Estimate Clipboard** — estimate whatever you've copied.
+  - **LLM Cost: Open Comparison Panel** — the visual dashboard.
+  - **LLM Cost: Select Models to Compare** — pick models from the catalog.
+  - **LLM Cost: Reset Session Total** — clear the running total.
 
 > **How "total" is calculated:** cost = input tokens + an _assumed_ number of
 > output tokens (output pricing is usually higher than input, so it matters).
@@ -93,10 +110,20 @@ All settings live under `llmCostEstimator.*`:
 | `llmCostEstimator.outputTokenAssumption` | `number` | `500` | Assumed output (completion) tokens used for the total-cost calculation. |
 | `llmCostEstimator.currency` | `string` | `"USD"` | Currency label shown next to costs. Display only — does **not** convert (pricing is in USD). |
 | `llmCostEstimator.enableHover` | `boolean` | `true` | Show the hover tooltip. |
+| `llmCostEstimator.enableCodeLens` | `boolean` | `true` | Show a CodeLens above detected prompt strings (JS/TS/Python). |
+| `llmCostEstimator.enableStatusBarSelection` | `boolean` | `true` | Show the live token count + cost of the current selection in the status bar. |
 
-**Available model keys** (out of the box): `gpt-4o`, `gpt-4o-mini`,
-`gpt-4-turbo`, `gpt-4`, `gpt-3.5-turbo`, `claude-opus`, `claude-sonnet`,
-`claude-haiku`, `gemini-1.5-pro`, `gemini-1.5-flash`.
+**Available model keys** (out of the box) — run **LLM Cost: Select Models to
+Compare** to pick from these visually:
+
+- **OpenAI:** `gpt-4o`, `gpt-4o-mini`, `gpt-4.1`, `gpt-4.1-mini`, `gpt-4.1-nano`,
+  `o3`, `o4-mini`, `gpt-4-turbo`, `gpt-4`, `gpt-3.5-turbo`
+- **Anthropic:** `claude-opus`, `claude-sonnet`, `claude-haiku`,
+  `claude-3.7-sonnet`, `claude-3.5-sonnet`, `claude-3-opus`
+- **Google:** `gemini-2.5-pro`, `gemini-2.5-flash`, `gemini-2.0-flash`,
+  `gemini-1.5-pro`, `gemini-1.5-flash`
+- **Others:** `deepseek-chat`, `deepseek-reasoner`, `mistral-large`,
+  `mistral-small`, `llama-3.3-70b`, `llama-3.1-405b`, `grok-2`
 
 Example `settings.json`:
 
