@@ -2,7 +2,7 @@
 
 > See how many tokens your prompt uses — and what it'll cost on **GPT-4o vs. Claude vs. Gemini** — right inside VS Code. No API key, no billing dashboard, no guessing.
 
-[![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Why this exists
@@ -209,7 +209,7 @@ Contributions are welcome — bug reports, pricing updates, new providers, and
 features alike.
 
 ```bash
-git clone https://github.com/your-username/llm-cost-estimator.git
+git clone https://github.com/waqarulwahab/llm-cost-estimator.git
 cd llm-cost-estimator
 npm install
 

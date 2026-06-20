@@ -88,6 +88,6 @@ Initial release — the MVP.
 - **Bundled, editable pricing** in `src/pricing/pricing.json` with a "verify
   prices" note.
 
-[0.3.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.3.0
-[0.2.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.2.0
-[0.1.0]: https://github.com/your-username/llm-cost-estimator/releases/tag/v0.1.0
+[0.3.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.3.0
+[0.2.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.2.0
+[0.1.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.1.0

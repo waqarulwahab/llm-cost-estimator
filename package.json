@@ -3,7 +3,7 @@
   "displayName": "LLM Cost & Token Estimator",
   "description": "Inline token counts and multi-model cost estimates (GPT-4o, Claude, Gemini) right in your editor. Local-first, zero config, no API key.",
   "version": "0.3.0",
-  "publisher": "your-publisher-id",
+  "publisher": "waqarulwahab",
   "license": "MIT",
   "icon": "images/icon.png",
   "engines": {
@@ -30,12 +30,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-username/llm-cost-estimator.git"
+    "url": "https://github.com/waqarulwahab/llm-cost-estimator.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/llm-cost-estimator/issues"
+    "url": "https://github.com/waqarulwahab/llm-cost-estimator/issues"
   },
-  "homepage": "https://github.com/your-username/llm-cost-estimator#readme",
+  "homepage": "https://github.com/waqarulwahab/llm-cost-estimator#readme",
   "main": "./dist/extension.js",
   "activationEvents": [
     "onStartupFinished"
