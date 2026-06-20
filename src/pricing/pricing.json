@@ -1,0 +1,75 @@
+{
+  "_note": "Prices are in USD per 1,000,000 tokens. THESE ARE REPRESENTATIVE PLACEHOLDERS and change frequently. ALWAYS verify against each provider's official pricing page before relying on them: OpenAI https://openai.com/api/pricing/ | Anthropic https://www.anthropic.com/pricing | Google https://ai.google.dev/pricing . 'encoding' is the OpenAI BPE used to count tokens; for anthropic/google it is only an approximation proxy (counts are estimates, not exact).",
+  "models": {
+    "gpt-4o": {
+      "label": "GPT-4o",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 2.5,
+      "outputPer1M": 10.0
+    },
+    "gpt-4o-mini": {
+      "label": "GPT-4o mini",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 0.15,
+      "outputPer1M": 0.6
+    },
+    "gpt-4-turbo": {
+      "label": "GPT-4 Turbo",
+      "provider": "openai",
+      "encoding": "cl100k_base",
+      "inputPer1M": 10.0,
+      "outputPer1M": 30.0
+    },
+    "gpt-4": {
+      "label": "GPT-4",
+      "provider": "openai",
+      "encoding": "cl100k_base",
+      "inputPer1M": 30.0,
+      "outputPer1M": 60.0
+    },
+    "gpt-3.5-turbo": {
+      "label": "GPT-3.5 Turbo",
+      "provider": "openai",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.5,
+      "outputPer1M": 1.5
+    },
+    "claude-opus": {
+      "label": "Claude Opus",
+      "provider": "anthropic",
+      "encoding": "cl100k_base",
+      "inputPer1M": 15.0,
+      "outputPer1M": 75.0
+    },
+    "claude-sonnet": {
+      "label": "Claude Sonnet",
+      "provider": "anthropic",
+      "encoding": "cl100k_base",
+      "inputPer1M": 3.0,
+      "outputPer1M": 15.0
+    },
+    "claude-haiku": {
+      "label": "Claude Haiku",
+      "provider": "anthropic",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.8,
+      "outputPer1M": 4.0
+    },
+    "gemini-1.5-pro": {
+      "label": "Gemini 1.5 Pro",
+      "provider": "google",
+      "encoding": "cl100k_base",
+      "inputPer1M": 1.25,
+      "outputPer1M": 5.0
+    },
+    "gemini-1.5-flash": {
+      "label": "Gemini 1.5 Flash",
+      "provider": "google",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.075,
+      "outputPer1M": 0.3
+    }
+  }
+}

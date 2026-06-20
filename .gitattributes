@@ -1,0 +1,4 @@
+# Normalize line endings to LF across platforms (matches Prettier endOfLine: lf).
+* text=auto eol=lf
+*.png binary
+*.vsix binary
