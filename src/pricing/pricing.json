@@ -1,5 +1,5 @@
 {
-  "_note": "Prices are in USD per 1,000,000 tokens. THESE ARE REPRESENTATIVE PLACEHOLDERS and change frequently. ALWAYS verify against each provider's official pricing page before relying on them: OpenAI https://openai.com/api/pricing/ | Anthropic https://www.anthropic.com/pricing | Google https://ai.google.dev/pricing . 'encoding' is the OpenAI BPE used to count tokens; for anthropic/google it is only an approximation proxy (counts are estimates, not exact).",
+  "_note": "Prices are in USD per 1,000,000 tokens. THESE ARE REPRESENTATIVE PLACEHOLDERS and change frequently. ALWAYS verify against each provider's official pricing page before relying on them: OpenAI https://openai.com/api/pricing/ | Anthropic https://www.anthropic.com/pricing | Google https://ai.google.dev/pricing | DeepSeek https://api-docs.deepseek.com/quick_start/pricing | Mistral https://mistral.ai/pricing | Together/Groq for Llama | xAI https://x.ai . 'encoding' is the OpenAI BPE used to count tokens; only OpenAI is exact — every other provider is an approximation proxy (counts are estimates, not exact).",
   "models": {
     "gpt-4o": {
       "label": "GPT-4o",
@@ -14,6 +14,41 @@
       "encoding": "o200k_base",
       "inputPer1M": 0.15,
       "outputPer1M": 0.6
+    },
+    "gpt-4.1": {
+      "label": "GPT-4.1",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 2.0,
+      "outputPer1M": 8.0
+    },
+    "gpt-4.1-mini": {
+      "label": "GPT-4.1 mini",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 0.4,
+      "outputPer1M": 1.6
+    },
+    "gpt-4.1-nano": {
+      "label": "GPT-4.1 nano",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 0.1,
+      "outputPer1M": 0.4
+    },
+    "o3": {
+      "label": "OpenAI o3",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 2.0,
+      "outputPer1M": 8.0
+    },
+    "o4-mini": {
+      "label": "OpenAI o4-mini",
+      "provider": "openai",
+      "encoding": "o200k_base",
+      "inputPer1M": 1.1,
+      "outputPer1M": 4.4
     },
     "gpt-4-turbo": {
       "label": "GPT-4 Turbo",
@@ -37,25 +72,67 @@
       "outputPer1M": 1.5
     },
     "claude-opus": {
-      "label": "Claude Opus",
+      "label": "Claude Opus 4",
       "provider": "anthropic",
       "encoding": "cl100k_base",
       "inputPer1M": 15.0,
       "outputPer1M": 75.0
     },
     "claude-sonnet": {
-      "label": "Claude Sonnet",
+      "label": "Claude Sonnet 4",
       "provider": "anthropic",
       "encoding": "cl100k_base",
       "inputPer1M": 3.0,
       "outputPer1M": 15.0
     },
     "claude-haiku": {
-      "label": "Claude Haiku",
+      "label": "Claude Haiku 3.5",
       "provider": "anthropic",
       "encoding": "cl100k_base",
       "inputPer1M": 0.8,
       "outputPer1M": 4.0
+    },
+    "claude-3.7-sonnet": {
+      "label": "Claude 3.7 Sonnet",
+      "provider": "anthropic",
+      "encoding": "cl100k_base",
+      "inputPer1M": 3.0,
+      "outputPer1M": 15.0
+    },
+    "claude-3.5-sonnet": {
+      "label": "Claude 3.5 Sonnet",
+      "provider": "anthropic",
+      "encoding": "cl100k_base",
+      "inputPer1M": 3.0,
+      "outputPer1M": 15.0
+    },
+    "claude-3-opus": {
+      "label": "Claude 3 Opus",
+      "provider": "anthropic",
+      "encoding": "cl100k_base",
+      "inputPer1M": 15.0,
+      "outputPer1M": 75.0
+    },
+    "gemini-2.5-pro": {
+      "label": "Gemini 2.5 Pro",
+      "provider": "google",
+      "encoding": "cl100k_base",
+      "inputPer1M": 1.25,
+      "outputPer1M": 10.0
+    },
+    "gemini-2.5-flash": {
+      "label": "Gemini 2.5 Flash",
+      "provider": "google",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.3,
+      "outputPer1M": 2.5
+    },
+    "gemini-2.0-flash": {
+      "label": "Gemini 2.0 Flash",
+      "provider": "google",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.1,
+      "outputPer1M": 0.4
     },
     "gemini-1.5-pro": {
       "label": "Gemini 1.5 Pro",
@@ -70,6 +147,55 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.075,
       "outputPer1M": 0.3
+    },
+    "deepseek-chat": {
+      "label": "DeepSeek-V3 (chat)",
+      "provider": "deepseek",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.27,
+      "outputPer1M": 1.1
+    },
+    "deepseek-reasoner": {
+      "label": "DeepSeek-R1 (reasoner)",
+      "provider": "deepseek",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.55,
+      "outputPer1M": 2.19
+    },
+    "mistral-large": {
+      "label": "Mistral Large",
+      "provider": "mistral",
+      "encoding": "cl100k_base",
+      "inputPer1M": 2.0,
+      "outputPer1M": 6.0
+    },
+    "mistral-small": {
+      "label": "Mistral Small",
+      "provider": "mistral",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.2,
+      "outputPer1M": 0.6
+    },
+    "llama-3.3-70b": {
+      "label": "Llama 3.3 70B",
+      "provider": "meta",
+      "encoding": "cl100k_base",
+      "inputPer1M": 0.59,
+      "outputPer1M": 0.79
+    },
+    "llama-3.1-405b": {
+      "label": "Llama 3.1 405B",
+      "provider": "meta",
+      "encoding": "cl100k_base",
+      "inputPer1M": 3.0,
+      "outputPer1M": 3.0
+    },
+    "grok-2": {
+      "label": "Grok 2",
+      "provider": "xai",
+      "encoding": "cl100k_base",
+      "inputPer1M": 2.0,
+      "outputPer1M": 10.0
     }
   }
 }

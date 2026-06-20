@@ -1,9 +1,25 @@
 import { OpenAITokenizer } from "./openai";
 import { AnthropicTokenizer } from "./anthropic";
 import { GoogleTokenizer } from "./google";
+import { EstimateTokenizer } from "./estimate";
 
-/** Supported LLM providers. */
-export type Provider = "openai" | "anthropic" | "google";
+/**
+ * Supported LLM providers. `openai` is tokenized exactly; every other provider
+ * is approximated (see {@link EstimateTokenizer}). The `(string & {})` member
+ * keeps the literal hints while allowing new providers in `pricing.json` without
+ * a code change.
+ */
+export type Provider =
+  | "openai"
+  | "anthropic"
+  | "google"
+  | "mistral"
+  | "meta"
+  | "deepseek"
+  | "xai"
+  | "cohere"
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  | (string & {});
 
 /** OpenAI BPE encodings we support locally. */
 export type EncodingName = "o200k_base" | "cl100k_base";
@@ -16,7 +32,7 @@ export interface Tokenizer {
   readonly provider: Provider;
   /**
    * `true` when the count is an approximation rather than the provider's exact
-   * tokenization (currently Anthropic and Google). The UI must label these.
+   * tokenization (everything except OpenAI). The UI must label these.
    */
   readonly isEstimate: boolean;
   /** Count tokens for `text`. Returns 0 for empty input. */
@@ -24,9 +40,9 @@ export interface Tokenizer {
 }
 
 /**
- * Returns a tokenizer for the given provider. `encoding` is only meaningful for
- * OpenAI (real BPE); the estimate-based providers ignore it and use a fixed
- * proxy encoding internally.
+ * Returns a tokenizer for the given provider. Only OpenAI gets exact BPE
+ * tokenization; Anthropic and Google have dedicated (estimate) classes for
+ * clarity, and any other provider falls back to a generic estimate.
  */
 export function getTokenizer(provider: Provider, encoding: EncodingName = "o200k_base"): Tokenizer {
   switch (provider) {
@@ -36,10 +52,7 @@ export function getTokenizer(provider: Provider, encoding: EncodingName = "o200k
       return new AnthropicTokenizer();
     case "google":
       return new GoogleTokenizer();
-    default: {
-      // Exhaustiveness guard: adding a Provider without a case is a type error.
-      const _exhaustive: never = provider;
-      throw new Error(`Unsupported provider: ${String(_exhaustive)}`);
-    }
+    default:
+      return new EstimateTokenizer(provider, encoding);
   }
 }

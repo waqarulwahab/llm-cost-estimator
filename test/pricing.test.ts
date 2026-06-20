@@ -68,7 +68,16 @@ describe("pricing table", () => {
   });
 
   it("every entry has positive, well-formed numbers and a valid provider", () => {
-    const validProviders = new Set(["openai", "anthropic", "google"]);
+    const validProviders = new Set([
+      "openai",
+      "anthropic",
+      "google",
+      "deepseek",
+      "mistral",
+      "meta",
+      "xai",
+      "cohere",
+    ]);
     const validEncodings = new Set(["o200k_base", "cl100k_base"]);
     for (const key of listModels()) {
       const p = getModelPricing(key)!;
@@ -84,5 +93,14 @@ describe("pricing table", () => {
   it("maps Anthropic/Google entries to a proxy encoding (estimates)", () => {
     expect(getModelPricing("claude-sonnet")!.provider).toBe("anthropic");
     expect(getModelPricing("gemini-1.5-pro")!.provider).toBe("google");
+  });
+
+  it("includes a broad, multi-provider catalog", () => {
+    const providers = new Set(listModels().map((k) => getModelPricing(k)!.provider));
+    expect(providers.has("openai")).toBe(true);
+    expect(providers.has("anthropic")).toBe(true);
+    expect(providers.has("google")).toBe(true);
+    expect(providers.has("deepseek")).toBe(true);
+    expect(listModels().length).toBeGreaterThanOrEqual(20);
   });
 });
