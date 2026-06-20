@@ -1,4 +1,5 @@
 // Pure, VS Code-free formatting helpers shared by the UI layer and tested directly.
+import type { ModelEstimate } from "./estimator";
 
 const CURRENCY_SYMBOLS: Record<string, string> = {
   USD: "$",
@@ -50,3 +51,11 @@ export function formatTokens(value: number): string {
 
 /** Marker appended to a model label when its token count is an approximation. */
 export const ESTIMATE_MARKER = "~";
+
+/** Marker shown when a prompt exceeds a model's context window. */
+export const OVER_CONTEXT_MARKER = "⚠";
+
+/** Sorts estimates cheapest-first (by total cost). Pure; safe to reuse anywhere. */
+export function sortByCost(estimates: ModelEstimate[]): ModelEstimate[] {
+  return [...estimates].sort((a, b) => a.totalCost - b.totalCost);
+}

@@ -104,4 +104,18 @@ describe("estimate", () => {
     expect(result.charCount).toBe(5);
     expect(result.currency).toBe("EUR");
   });
+
+  it("flags over-context when input exceeds a small window", () => {
+    // gpt-4 has an 8,192-token window; ~20k repeated words blow past it.
+    const long = "word ".repeat(20000);
+    const e = estimate(long, { models: ["gpt-4"], outputTokenAssumption: 0 }).estimates[0];
+    expect(e.contextWindow).toBe(8192);
+    expect(e.inputTokens).toBeGreaterThan(8192);
+    expect(e.overContext).toBe(true);
+  });
+
+  it("does not flag over-context for small input", () => {
+    const e = estimate("hello", { models: ["gpt-4o"], outputTokenAssumption: 500 }).estimates[0];
+    expect(e.overContext).toBe(false);
+  });
 });

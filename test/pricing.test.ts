@@ -1,9 +1,11 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import {
+  coerceModelPricing,
   computeCost,
   getModelPricing,
   listModels,
   loadPricing,
+  setCustomModels,
   type ModelPricing,
 } from "../src/pricing/pricing";
 
@@ -102,5 +104,56 @@ describe("pricing table", () => {
     expect(providers.has("google")).toBe(true);
     expect(providers.has("deepseek")).toBe(true);
     expect(listModels().length).toBeGreaterThanOrEqual(20);
+  });
+
+  it("exposes a context window for built-in models", () => {
+    expect(getModelPricing("gpt-4")!.contextWindow).toBe(8192);
+    expect(getModelPricing("claude-sonnet")!.contextWindow).toBeGreaterThan(0);
+  });
+});
+
+describe("custom models", () => {
+  afterEach(() => setCustomModels({})); // reset overrides between tests
+
+  it("adds a valid custom model that estimate can use", () => {
+    const { added, errors } = setCustomModels({
+      "my-model": { label: "My Model", provider: "openai", inputPer1M: 1, outputPer1M: 2 },
+    });
+    expect(added).toEqual(["my-model"]);
+    expect(errors).toEqual([]);
+    expect(getModelPricing("my-model")?.label).toBe("My Model");
+    expect(listModels()).toContain("my-model");
+  });
+
+  it("rejects malformed entries and reports them", () => {
+    const { added, errors } = setCustomModels({
+      good: { label: "Good", provider: "openai", inputPer1M: 1, outputPer1M: 2 },
+      missingPrices: { provider: "openai" },
+      negative: { provider: "openai", inputPer1M: -1, outputPer1M: 2 },
+    });
+    expect(added).toEqual(["good"]);
+    expect(errors.sort()).toEqual(["missingPrices", "negative"]);
+  });
+
+  it("lets a custom entry override a built-in model", () => {
+    setCustomModels({
+      "gpt-4o": {
+        label: "GPT-4o (corp rate)",
+        provider: "openai",
+        inputPer1M: 99,
+        outputPer1M: 99,
+      },
+    });
+    expect(getModelPricing("gpt-4o")?.inputPer1M).toBe(99);
+  });
+
+  it("coerce picks an encoding by provider when omitted", () => {
+    expect(
+      coerceModelPricing("a", { provider: "openai", inputPer1M: 1, outputPer1M: 1 })?.encoding,
+    ).toBe("o200k_base");
+    expect(
+      coerceModelPricing("b", { provider: "anthropic", inputPer1M: 1, outputPer1M: 1 })?.encoding,
+    ).toBe("cl100k_base");
+    expect(coerceModelPricing("c", { provider: "openai" })).toBeUndefined();
   });
 });

@@ -28,6 +28,10 @@ export interface ModelEstimate {
   outputCost: number;
   /** input + assumed output (USD). */
   totalCost: number;
+  /** Model context window in tokens, if known. */
+  contextWindow?: number;
+  /** True when input + assumed output exceeds the model's context window. */
+  overContext: boolean;
 }
 
 /** Full result of estimating a piece of text across several models. */
@@ -70,6 +74,8 @@ export function estimate(text: string, options: EstimateOptions): EstimateResult
     }
 
     const { inputCost, outputCost, totalCost } = computeCost(inputTokens, outputTokens, pricing);
+    const overContext =
+      pricing.contextWindow !== undefined && inputTokens + outputTokens > pricing.contextWindow;
     estimates.push({
       model,
       label: pricing.label,
@@ -80,6 +86,8 @@ export function estimate(text: string, options: EstimateOptions): EstimateResult
       inputCost,
       outputCost,
       totalCost,
+      contextWindow: pricing.contextWindow,
+      overContext,
     });
   }
 
