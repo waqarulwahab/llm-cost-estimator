@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { estimate } from "../core/estimator";
+import { resultToMarkdown } from "../core/export";
 import { getModelPricing, listModels } from "../pricing/pricing";
 import { currencySymbol } from "../core/format";
 import type { ExtensionSettings } from "../settings";
@@ -47,6 +48,7 @@ function buildPayload(text: string, title: string, settings: ExtensionSettings) 
       inputTokens: e.inputTokens,
       inputPer1M: pricing?.inputPer1M ?? 0,
       outputPer1M: pricing?.outputPer1M ?? 0,
+      contextWindow: pricing?.contextWindow ?? null,
     };
   });
   return {
@@ -85,6 +87,8 @@ export class ComparisonPanel {
       (msg) => {
         if (msg?.type === "ready" || msg?.type === "refresh") {
           this.postData();
+        } else if (msg?.type === "copy") {
+          this.copyMarkdown(Number(msg.outputTokens));
         }
       },
       undefined,
@@ -111,6 +115,24 @@ export class ComparisonPanel {
   private postData(): void {
     const { text, title } = currentSource();
     void this.panel.webview.postMessage(buildPayload(text, title, this.getSettings()));
+  }
+
+  private copyMarkdown(outputTokens: number): void {
+    const settings = this.getSettings();
+    const { text } = currentSource();
+    const result = estimate(text, {
+      models: listModels(),
+      outputTokenAssumption: Number.isFinite(outputTokens)
+        ? outputTokens
+        : settings.outputTokenAssumption,
+      currency: settings.currency,
+    });
+    if (result.estimates.length === 0) {
+      vscode.window.showInformationMessage("LLM Cost: nothing to copy.");
+      return;
+    }
+    void vscode.env.clipboard.writeText(resultToMarkdown(result));
+    vscode.window.showInformationMessage("LLM Cost: comparison copied to clipboard as Markdown.");
   }
 
   private html(): string {
@@ -213,6 +235,7 @@ const PANEL_HTML = /* html */ `<!DOCTYPE html>
     </div>
     <div class="control">
       <button id="refresh">↻ Refresh from editor</button>
+      <button id="copy">⧉ Copy as Markdown</button>
     </div>
   </div>
 
@@ -295,9 +318,13 @@ const PANEL_HTML = /* html */ `<!DOCTYPE html>
     el("tbody").innerHTML = data
       .map((d) => {
         const est = d.isEstimate ? '<span class="est"> ~</span>' : "";
+        const over =
+          d.contextWindow && d.inputTokens + out > d.contextWindow
+            ? '<span class="est" title="exceeds context window"> ⚠</span>'
+            : "";
         const cheap = d.total === minTotal ? ' class="cheapest"' : "";
         return (
-          "<tr" + cheap + "><td>" + escapeHtml(d.label) + est +
+          "<tr" + cheap + "><td>" + escapeHtml(d.label) + est + over +
           '<span class="prov">  ' + escapeHtml(d.provider) + "</span></td>" +
           "<td>" + fmtTokens(d.inputTokens) + "</td>" +
           "<td>" + fmtCost(d.inputCost, sym, code) + "</td>" +
@@ -326,6 +353,9 @@ const PANEL_HTML = /* html */ `<!DOCTYPE html>
   });
   el("configuredOnly").addEventListener("change", (e) => { configuredOnly = e.target.checked; render(); });
   el("refresh").addEventListener("click", () => vscode.postMessage({ type: "refresh" }));
+  el("copy").addEventListener("click", () =>
+    vscode.postMessage({ type: "copy", outputTokens: Number(el("outNum").value) }),
+  );
   document.querySelectorAll("th").forEach((th) => {
     th.addEventListener("click", () => {
       const key = th.dataset.sort;

@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import { estimate } from "../core/estimator";
 import { detectPromptSites } from "../core/detect";
-import { formatCost, formatTokens } from "../core/format";
-import { sortByCost } from "./markdown";
+import { formatCost, formatTokens, OVER_CONTEXT_MARKER, sortByCost } from "../core/format";
 import type { ExtensionSettings } from "../settings";
 
 const DOC_SCAN_LIMIT = 200_000; // chars
@@ -47,9 +46,10 @@ export class LlmCostCodeLensProvider implements vscode.CodeLensProvider {
         document.positionAt(site.contentEnd),
       );
       const prefix = cheapest.isEstimate ? "~" : "";
+      const overCtx = result.estimates.some((e) => e.overContext) ? ` ${OVER_CONTEXT_MARKER}` : "";
       const title =
         `$(symbol-number) ${formatTokens(cheapest.inputTokens)} tokens · ` +
-        `${prefix}${formatCost(cheapest.totalCost, result.currency)} ${cheapest.label} · ` +
+        `${prefix}${formatCost(cheapest.totalCost, result.currency)} ${cheapest.label}${overCtx} · ` +
         `$(arrow-swap) compare ${result.estimates.length}`;
 
       lenses.push(
