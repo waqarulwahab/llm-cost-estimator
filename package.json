@@ -196,7 +196,9 @@
     "e2e": "node esbuild.js && node scripts/smoke.js",
     "typecheck": "tsc --noEmit",
     "generate-icon": "node scripts/generate-icon.js",
-    "vsce:package": "vsce package"
+    "vsce:package": "vsce package",
+    "mcp:build": "npm --prefix mcp-server run build",
+    "mcp:test": "npm --prefix mcp-server test"
   },
   "dependencies": {
     "js-tiktoken": "^1.0.21"

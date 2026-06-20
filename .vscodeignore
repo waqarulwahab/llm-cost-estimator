@@ -4,7 +4,9 @@
 src/**
 test/**
 scripts/**
+mcp-server/**
 node_modules/**
+**/node_modules/**
 coverage/**
 **/*.ts
 **/*.map

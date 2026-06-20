@@ -63,6 +63,15 @@ _A short GIF showing the hover tooltip and the status bar in action goes here._
   the UI. They're great for ballpark cost comparison, not for exact billing. (An
   optional API-based accurate mode is a candidate for a future release.)
 
+## Also available as an MCP server (use it in Claude / Cursor)
+
+This repo also ships an **[MCP server](mcp-server/)** that exposes the same
+tokenizer + pricing engine as tools (`estimate_cost`, `count_tokens`,
+`list_models`) to Claude Desktop, Claude Code, Cursor, or any MCP client — so you
+can ask _"what does this prompt cost on GPT-4o vs Claude vs Gemini?"_ right in
+your chat. See **[mcp-server/README.md](mcp-server/README.md)** for setup. Same
+local-first, no-API-key core — just a different front end.
+
 ## Install
 
 **From the Marketplace** (once published):
@@ -234,7 +243,8 @@ src/
   ui/          # hover, status bar, CodeLens, QuickPick, comparison + scan webviews
   commands/    # command handlers
   extension.ts # activate() / deactivate()
-test/          # Vitest unit tests for the core logic
+test/          # Vitest unit + load tests for the core logic
+mcp-server/    # MCP server (reuses src/core, src/pricing) — use it in Claude/Cursor
 ```
 
 The `core/`, `tokenizer/`, and `pricing/` layers are intentionally free of any
