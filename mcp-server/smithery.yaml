@@ -1,0 +1,13 @@
+# Smithery deployment config — https://smithery.ai/docs
+# Lets Smithery launch the published npm package as a local stdio MCP server.
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties: {}
+    required: []
+  commandFunction: |-
+    (config) => ({
+      command: "npx",
+      args: ["-y", "llm-cost-estimator-mcp"]
+    })

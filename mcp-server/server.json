@@ -1,0 +1,21 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
+  "name": "io.github.waqarulwahab/llm-cost-estimator",
+  "description": "Count tokens and estimate LLM costs across GPT-4o, Claude, Gemini, DeepSeek, Mistral, Llama, Grok, and 25+ models. Local-first, no API key.",
+  "repository": {
+    "url": "https://github.com/waqarulwahab/llm-cost-estimator",
+    "source": "github",
+    "subfolder": "mcp-server"
+  },
+  "version": "0.3.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "llm-cost-estimator-mcp",
+      "version": "0.3.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
