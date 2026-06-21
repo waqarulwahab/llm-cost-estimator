@@ -21,15 +21,11 @@ API key required.
 
 ## Demo
 
-![LLM Cost & Token Estimator — hover a prompt to compare token count and cost across GPT-4o, Claude, and Gemini](images/demo.svg)
+![LLM Cost & Token Estimator — hover a prompt to compare token count and cost across GPT-4o, Claude, and Gemini](images/demo.png)
 
 > Hover any prompt (or select text) to see its token count and cost across your
 > models, side by side — cheapest first. Same comparison powers the CodeLens, the
-> live status bar, and the Comparison Panel.
-
-<!-- NOTE: the animated SVG renders on GitHub. The VS Code Marketplace blocks SVG
-in READMEs, so before publishing, also record a real screen-capture GIF/PNG and
-reference that here for the Marketplace listing. -->
+> live status bar, and the Comparison Panel. _([animated version](images/demo.svg))_
 
 
 
