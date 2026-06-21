@@ -20,14 +20,21 @@ It reuses the exact same tokenizer + pricing + estimator core as the
 > official pricing page. OpenAI counts are exact; all other providers are
 > approximated via an OpenAI encoding and flagged as estimates.
 
-## Build
+## Build (from source)
+
+The server **reuses the extension's core** in `../src` (whose files import
+`js-tiktoken`), so install the repo-root dependencies first:
 
 ```bash
+npm install            # at the repo ROOT, once (provides the reused core's deps)
 cd mcp-server
 npm install
-npm run build      # -> dist/index.js
-npm test           # spins up the server and runs a real stdio handshake
+npm run build          # -> dist/index.js
+npm test               # builds, then runs a real stdio MCP handshake
 ```
+
+End users don't need this — they just `npx -y llm-cost-estimator-mcp` once it's
+published (the published `dist/index.js` is fully self-contained).
 
 ## Connect it
 
