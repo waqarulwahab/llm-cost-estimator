@@ -220,7 +220,10 @@ are very welcome.
 ## Contributing
 
 Contributions are welcome — bug reports, pricing updates, new providers, and
-features alike.
+features alike. **New here?** Start with **[CONTRIBUTING.md](CONTRIBUTING.md)**,
+browse the **[ROADMAP](ROADMAP.md)**, or pick a
+[`good first issue`](https://github.com/waqarulwahab/llm-cost-estimator/labels/good%20first%20issue).
+By participating you agree to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ```bash
 git clone https://github.com/waqarulwahab/llm-cost-estimator.git

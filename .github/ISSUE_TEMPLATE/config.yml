@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 Questions & ideas
+    url: https://github.com/waqarulwahab/llm-cost-estimator/discussions
+    about: Ask a question or float an idea (no bug/feature yet).
+  - name: 🗺️ Roadmap & good first issues
+    url: https://github.com/waqarulwahab/llm-cost-estimator/blob/main/ROADMAP.md
+    about: See what's planned and where to start.

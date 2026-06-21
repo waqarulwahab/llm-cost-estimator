@@ -1,0 +1,31 @@
+name: 💲 Pricing update
+description: A model's price is wrong/outdated, or a model is missing
+labels: ["pricing"]
+body:
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      description: The model alias / key (e.g. gpt-4o, claude-sonnet) or a new model name.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What should change?
+      description: Current vs correct input/output price per 1M tokens, context window, etc.
+      placeholder: |
+        gpt-4o output price should be $X / 1M (currently $Y)
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Official source link
+      description: Link to the provider's official pricing page (required for verification).
+      placeholder: https://openai.com/api/pricing/
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: "💡 Tip: this is a great first PR — just edit `src/pricing/pricing.json` and link the source."

@@ -1,0 +1,36 @@
+name: 🐛 Bug report
+description: Something isn't working as expected
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the bug, and what you expected instead.
+      placeholder: When I hover a string, the cost shows as $0...
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a .ts file
+        2. Hover over "..."
+        3. See ...
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Extension version, VS Code (or Cursor/VSCodium) version, OS.
+      placeholder: ext 0.3.1 · VS Code 1.95 · Windows 11
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: Relevant settings (optional)
+      description: Your `llmCostEstimator.*` settings, if related.
+      render: jsonc
