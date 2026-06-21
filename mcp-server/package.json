@@ -1,6 +1,7 @@
 {
   "name": "llm-cost-estimator-mcp",
-  "version": "0.3.0",
+  "version": "0.3.1",
+  "mcpName": "io.github.waqarulwahab/llm-cost-estimator",
   "description": "MCP server for LLM token counting and multi-model cost estimation (GPT-4o, Claude, Gemini, and 25+ models). Local-first, no API key.",
   "license": "MIT",
   "author": "waqarulwahab",

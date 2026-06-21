@@ -4,6 +4,24 @@ All notable changes to this extension are documented here. This project follows
 [Semantic Versioning](https://semver.org/) and the
 [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [0.3.1] - 2026-06-21
+
+Distribution & discovery.
+
+### Added
+
+- **MCP server published to npm** (`llm-cost-estimator-mcp`) — usable anywhere via
+  `npx -y llm-cost-estimator-mcp`.
+- **Official MCP Registry** manifest ([`mcp-server/server.json`](mcp-server/server.json))
+  + automated publishing from the release workflow via GitHub OIDC (no PAT). The
+  npm package now carries the required `mcpName` field.
+- **Smithery** config ([`mcp-server/smithery.yaml`](mcp-server/smithery.yaml)).
+- **Animated demo** in the README and a [promotion/launch kit](docs/PROMOTION.md).
+
+### Changed
+
+- Versions synced to 0.3.1 across the extension and MCP server.
+
 ## [0.3.0] - 2026-06-21
 
 Power-user features and project-wide visibility.
@@ -88,6 +106,7 @@ Initial release — the MVP.
 - **Bundled, editable pricing** in `src/pricing/pricing.json` with a "verify
   prices" note.
 
+[0.3.1]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.3.1
 [0.3.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.3.0
 [0.2.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.2.0
 [0.1.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.1.0

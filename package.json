@@ -2,7 +2,7 @@
   "name": "llm-cost-estimator",
   "displayName": "LLM Cost & Token Estimator",
   "description": "Inline token counts and multi-model cost estimates (GPT-4o, Claude, Gemini) right in your editor. Local-first, zero config, no API key.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publisher": "waqarulwahab",
   "license": "MIT",
   "icon": "images/icon.png",

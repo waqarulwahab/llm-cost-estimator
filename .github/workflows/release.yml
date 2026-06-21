@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write # for GitHub OIDC auth to the MCP Registry
 
 jobs:
   release:
@@ -60,3 +61,15 @@ jobs:
           npm ci
           npm test
           npm publish --access public
+
+      # Lists the server on the Official MCP Registry. Uses GitHub OIDC (no PAT)
+      # to prove ownership of the io.github.waqarulwahab/* namespace. Runs only
+      # after the npm publish above, since the registry verifies the npm package
+      # carries a matching "mcpName" field.
+      - name: Publish to Official MCP Registry
+        if: ${{ env.NPM_TOKEN != '' }}
+        working-directory: mcp-server
+        run: |
+          curl -sL "https://github.com/modelcontextprotocol/registry/releases/download/v1.7.9/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

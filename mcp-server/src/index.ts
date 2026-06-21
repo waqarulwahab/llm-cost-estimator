@@ -16,7 +16,7 @@ const DEFAULT_MODELS = [
   "gemini-2.5-flash",
 ];
 
-const server = new McpServer({ name: "llm-cost-estimator", version: "0.3.0" });
+const server = new McpServer({ name: "llm-cost-estimator", version: "0.3.1" });
 
 server.registerTool(
   "estimate_cost",

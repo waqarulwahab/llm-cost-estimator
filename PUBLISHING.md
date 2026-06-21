@@ -72,6 +72,9 @@ On the tag push, [`.github/workflows/release.yml`](.github/workflows/release.yml
    notes (always).
 3. Publishes to the **Marketplace** (if `VSCE_PAT`), **Open VSX** (if `OVSX_PAT`),
    and **npm** (if `NPM_TOKEN`).
+4. If `NPM_TOKEN` is set, also lists the MCP server on the **Official MCP
+   Registry** via GitHub OIDC — no extra token needed (the `id-token: write`
+   permission proves ownership of the `io.github.waqarulwahab/*` namespace).
 
 ---
 
@@ -110,7 +113,7 @@ npm publish --access public
 
 - **Marketplace:** Extensions view → search **"LLM Cost & Token Estimator"** →
   Install.
-- **Or a `.vsix`:** `code --install-extension llm-cost-estimator-0.3.0.vsix`
+- **Or a `.vsix`:** `code --install-extension llm-cost-estimator-0.3.1.vsix`
   (download from the GitHub Release).
 
 ### The MCP server (Claude / Cursor)

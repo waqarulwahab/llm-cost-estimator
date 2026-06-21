@@ -3,7 +3,7 @@
 > See how many tokens your prompt uses — and what it'll cost on **GPT-4o vs. Claude vs. Gemini** — right inside VS Code. No API key, no billing dashboard, no guessing.
 
 [![CI](https://github.com/waqarulwahab/llm-cost-estimator/actions/workflows/ci.yml/badge.svg)](https://github.com/waqarulwahab/llm-cost-estimator/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Why this exists
@@ -92,7 +92,7 @@ local-first, no-API-key core — just a different front end.
 **From a `.vsix`:**
 
 ```bash
-code --install-extension llm-cost-estimator-0.3.0.vsix
+code --install-extension llm-cost-estimator-0.3.1.vsix
 ```
 
 **From source (for development):** see [Contributing](#contributing).
