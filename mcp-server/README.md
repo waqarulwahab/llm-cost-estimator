@@ -16,6 +16,12 @@ It reuses the exact same tokenizer + pricing + estimator core as the
 | `count_tokens` | Token count for one model. Args: `text`, `model?`. OpenAI is exact (tiktoken); others are flagged estimates. |
 | `list_models` | All model keys with provider, prices (USD/1M), and context window. |
 
+## Example prompts
+
+- `estimate_cost`: _"Estimate the cost of this prompt on GPT-4o, Claude Sonnet, and Gemini with 800 output tokens."_
+- `count_tokens`: _"How many tokens is this text for GPT-4o?"_
+- `list_models`: _"Which LLM models can the cost estimator compare, and what are their context windows?"_
+
 > ⚠️ Prices are representative placeholders — verify against each provider's
 > official pricing page. OpenAI counts are exact; all other providers are
 > approximated via an OpenAI encoding and flagged as estimates.
