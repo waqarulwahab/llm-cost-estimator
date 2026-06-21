@@ -2,7 +2,7 @@
   "name": "llm-cost-estimator",
   "displayName": "LLM Cost & Token Estimator",
   "description": "Inline token counts and multi-model cost estimates (GPT-4o, Claude, Gemini) right in your editor. Local-first, zero config, no API key.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "publisher": "waqarulwahab",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -83,6 +83,12 @@
         "command": "llmCostEstimator.resetSessionTotal",
         "title": "Reset Session Total",
         "category": "LLM Cost"
+      },
+      {
+        "command": "llmCostEstimator.refreshPricing",
+        "title": "Refresh Pricing from the Web",
+        "category": "LLM Cost",
+        "icon": "$(sync)"
       },
       {
         "command": "llmCostEstimator.estimateText",
@@ -177,6 +183,16 @@
             },
             "required": ["provider", "inputPer1M", "outputPer1M"]
           }
+        },
+        "llmCostEstimator.refreshPricingOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Fetch current prices from the web when the extension starts (cached for offline use; falls back to bundled prices on error). You can always refresh manually with **LLM Cost: Refresh Pricing from the Web**."
+        },
+        "llmCostEstimator.pricingSourceUrl": {
+          "type": "string",
+          "default": "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json",
+          "markdownDescription": "URL of the live pricing source (LiteLLM-compatible JSON: `{ \"<model>\": { \"input_cost_per_token\", \"output_cost_per_token\", \"max_input_tokens\" } }`). Models are matched by their `liveId` in `pricing.json`."
         }
       }
     }

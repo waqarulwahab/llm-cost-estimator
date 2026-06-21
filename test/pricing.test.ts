@@ -6,6 +6,7 @@ import {
   listModels,
   loadPricing,
   setCustomModels,
+  setLivePricing,
   type ModelPricing,
 } from "../src/pricing/pricing";
 
@@ -155,5 +156,35 @@ describe("custom models", () => {
       coerceModelPricing("b", { provider: "anthropic", inputPer1M: 1, outputPer1M: 1 })?.encoding,
     ).toBe("cl100k_base");
     expect(coerceModelPricing("c", { provider: "openai" })).toBeUndefined();
+  });
+});
+
+describe("live pricing overrides", () => {
+  afterEach(() => {
+    setLivePricing({});
+    setCustomModels({});
+  });
+
+  it("applies live price/context overrides while preserving label/provider", () => {
+    setLivePricing({ "gpt-4o": { inputPer1M: 99, outputPer1M: 199, contextWindow: 111 } });
+    const p = getModelPricing("gpt-4o")!;
+    expect(p.inputPer1M).toBe(99);
+    expect(p.outputPer1M).toBe(199);
+    expect(p.contextWindow).toBe(111);
+    expect(p.label).toBe("GPT-4o");
+    expect(p.provider).toBe("openai");
+  });
+
+  it("lets a user custom model win over live overrides", () => {
+    setLivePricing({ "gpt-4o": { inputPer1M: 99, outputPer1M: 199 } });
+    setCustomModels({
+      "gpt-4o": { label: "GPT-4o (mine)", provider: "openai", inputPer1M: 1, outputPer1M: 2 },
+    });
+    expect(getModelPricing("gpt-4o")!.inputPer1M).toBe(1);
+  });
+
+  it("exposes liveId for mapped models", () => {
+    expect(getModelPricing("gpt-4o")!.liveId).toBe("gpt-4o");
+    expect(getModelPricing("claude-haiku")!.liveId).toBeUndefined();
   });
 });

@@ -7,6 +7,7 @@ import { estimateClipboard } from "./commands/estimateClipboard";
 import { selectModels } from "./commands/selectModels";
 import { scanWorkspace } from "./commands/scanWorkspace";
 import { copyComparison } from "./commands/copyComparison";
+import { applyCachedLivePricing, refreshPricing } from "./commands/refreshPricing";
 import { readSettings } from "./settings";
 import { LlmCostHoverProvider } from "./ui/hoverProvider";
 import { LlmCostCodeLensProvider } from "./ui/codeLensProvider";
@@ -51,6 +52,7 @@ const LIVE_SELECTION_CAP = 50_000; // chars; above this, live status bar stays i
 
 export function activate(context: vscode.ExtensionContext): void {
   applyCustomModels();
+  applyCachedLivePricing(context); // offline-friendly: use last refreshed prices if any
 
   const statusBar = new StatusBarManager();
   const codeLensProvider = new LlmCostCodeLensProvider(readSettings);
@@ -79,6 +81,13 @@ export function activate(context: vscode.ExtensionContext): void {
       clearTimeout(liveTimer);
     }
     liveTimer = setTimeout(runLiveUpdate, LIVE_DEBOUNCE_MS);
+  };
+
+  // Re-render everything that shows a price after live pricing changes.
+  const refreshPricingUi = (): void => {
+    codeLensProvider.refresh();
+    runLiveUpdate();
+    ComparisonPanel.refreshIfOpen();
   };
 
   // --- Commands -----------------------------------------------------------
@@ -113,6 +122,9 @@ export function activate(context: vscode.ExtensionContext): void {
       await showEstimateQuickPick(last);
     }),
     vscode.commands.registerCommand("llmCostEstimator.resetSessionTotal", () => statusBar.reset()),
+    vscode.commands.registerCommand("llmCostEstimator.refreshPricing", () =>
+      refreshPricing(context, { onApplied: refreshPricingUi }),
+    ),
   );
 
   // --- Providers ----------------------------------------------------------
@@ -143,6 +155,14 @@ export function activate(context: vscode.ExtensionContext): void {
       }
     }),
   );
+
+  // --- Optional: refresh prices from the web on startup -------------------
+  const refreshOnStartup = vscode.workspace
+    .getConfiguration("llmCostEstimator")
+    .get<boolean>("refreshPricingOnStartup", false);
+  if (refreshOnStartup) {
+    void refreshPricing(context, { silent: true, onApplied: refreshPricingUi });
+  }
 }
 
 export function deactivate(): void {

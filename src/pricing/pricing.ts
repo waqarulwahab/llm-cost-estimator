@@ -16,6 +16,15 @@ export interface ModelPricing {
   outputPer1M: number;
   /** Context window in tokens, if known (used for over-limit warnings). */
   contextWindow?: number;
+  /** Key used to match this model against a live pricing source (e.g. LiteLLM). */
+  liveId?: string;
+}
+
+/** A partial price override applied from a live pricing source. */
+export interface LivePriceOverride {
+  inputPer1M: number;
+  outputPer1M: number;
+  contextWindow?: number;
 }
 
 /** Cost split into input, assumed-output, and the combined total (all USD). */
@@ -32,6 +41,7 @@ interface RawModel {
   inputPer1M: number;
   outputPer1M: number;
   contextWindow?: number;
+  liveId?: string;
 }
 
 function buildTable(raw: Record<string, RawModel>): Record<string, ModelPricing> {
@@ -45,6 +55,7 @@ function buildTable(raw: Record<string, RawModel>): Record<string, ModelPricing>
       inputPer1M: m.inputPer1M,
       outputPer1M: m.outputPer1M,
       contextWindow: m.contextWindow,
+      liveId: m.liveId,
     };
   }
   return table;
@@ -56,8 +67,35 @@ const defaultTable = buildTable((pricingData as { models: Record<string, RawMode
 // Kept here (not in the JSON) so users can add/override without rebuilding.
 let customTable: Record<string, ModelPricing> = {};
 
+// Live price overrides fetched from a maintained source (e.g. LiteLLM), keyed by
+// our model alias. Partial — only the price/context fields are updated.
+let liveTable: Record<string, LivePriceOverride> = {};
+
+/** Replaces the live pricing overrides (from `Refresh Pricing`). */
+export function setLivePricing(overrides: Record<string, LivePriceOverride>): void {
+  liveTable = overrides ?? {};
+}
+
+/** Current live pricing overrides (for caching/inspection). */
+export function getLivePricing(): Record<string, LivePriceOverride> {
+  return liveTable;
+}
+
+// Precedence: bundled defaults < live overrides < user custom models.
 function mergedTable(): Record<string, ModelPricing> {
-  return { ...defaultTable, ...customTable };
+  const out: Record<string, ModelPricing> = {};
+  for (const [key, base] of Object.entries(defaultTable)) {
+    const live = liveTable[key];
+    out[key] = live
+      ? {
+          ...base,
+          inputPer1M: live.inputPer1M,
+          outputPer1M: live.outputPer1M,
+          contextWindow: live.contextWindow ?? base.contextWindow,
+        }
+      : base;
+  }
+  return { ...out, ...customTable };
 }
 
 /**

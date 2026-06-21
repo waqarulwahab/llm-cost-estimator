@@ -3,7 +3,7 @@
 > See how many tokens your prompt uses — and what it'll cost on **GPT-4o vs. Claude vs. Gemini** — right inside VS Code. No API key, no billing dashboard, no guessing.
 
 [![CI](https://github.com/waqarulwahab/llm-cost-estimator/actions/workflows/ci.yml/badge.svg)](https://github.com/waqarulwahab/llm-cost-estimator/actions/workflows/ci.yml)
-[![Version](https://img.shields.io/badge/version-0.3.1-blue.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.3.2-blue.svg)](CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Why this exists
@@ -88,7 +88,7 @@ local-first, no-API-key core — just a different front end.
 **From a `.vsix`:**
 
 ```bash
-code --install-extension llm-cost-estimator-0.3.1.vsix
+code --install-extension llm-cost-estimator-0.3.2.vsix
 ```
 
 **From source (for development):** see [Contributing](#contributing).
@@ -113,6 +113,7 @@ code --install-extension llm-cost-estimator-0.3.1.vsix
   - **LLM Cost: Scan Workspace for Prompts** — project-wide prompt cost report.
   - **LLM Cost: Copy Comparison as Markdown** — table to clipboard.
   - **LLM Cost: Select Models to Compare** — pick models from the catalog.
+  - **LLM Cost: Refresh Pricing from the Web** — pull current prices (see below).
   - **LLM Cost: Reset Session Total** — clear the running total.
 
 > **How "total" is calculated:** cost = input tokens + an _assumed_ number of
@@ -137,6 +138,8 @@ All settings live under `llmCostEstimator.*`:
 | `llmCostEstimator.enableCodeLens` | `boolean` | `true` | Show a CodeLens above detected prompt strings (JS/TS/Python). |
 | `llmCostEstimator.enableStatusBarSelection` | `boolean` | `true` | Show the live token count + cost of the current selection in the status bar. |
 | `llmCostEstimator.customModels` | `object` | `{}` | Add or override models without editing `pricing.json` (see [Custom models](#custom-models)). |
+| `llmCostEstimator.refreshPricingOnStartup` | `boolean` | `false` | Fetch current prices from the web on startup (cached; falls back to bundled prices offline). See [Live pricing](#live-pricing). |
+| `llmCostEstimator.pricingSourceUrl` | `string` | LiteLLM data | URL of the live pricing source (LiteLLM-compatible JSON). |
 
 **Available model keys** (out of the box) — run **LLM Cost: Select Models to
 Compare** to pick from these visually:
@@ -183,7 +186,20 @@ without touching the bundled files, via `llmCostEstimator.customModels`:
 Then add the key to `llmCostEstimator.models` (or pick it via **Select Models to
 Compare**). Invalid entries are reported and skipped, not silently dropped.
 
-## Updating pricing
+## Live pricing
+
+The bundled prices are representative placeholders. Run **LLM Cost: Refresh
+Pricing from the Web** (or enable `llmCostEstimator.refreshPricingOnStartup`) to
+pull **current** prices from a maintained source — by default
+[LiteLLM's pricing data](https://github.com/BerriAI/litellm). The result is
+cached, so it keeps working offline and falls back to bundled prices on error.
+
+Each model in [`pricing.json`](src/pricing/pricing.json) declares a `liveId` (the
+source's key for that model); models without one keep their bundled price. Point
+`llmCostEstimator.pricingSourceUrl` at any LiteLLM-compatible JSON to use a
+different source. User `customModels` always win over live prices.
+
+## Updating pricing (bundled defaults)
 
 > ⚠️ **The bundled prices are representative placeholders and change
 > frequently. Verify them against each provider's official pricing page before

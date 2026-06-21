@@ -113,7 +113,7 @@ npm publish --access public
 
 - **Marketplace:** Extensions view → search **"LLM Cost & Token Estimator"** →
   Install.
-- **Or a `.vsix`:** `code --install-extension llm-cost-estimator-0.3.1.vsix`
+- **Or a `.vsix`:** `code --install-extension llm-cost-estimator-0.3.2.vsix`
   (download from the GitHub Release).
 
 ### The MCP server (Claude / Cursor)

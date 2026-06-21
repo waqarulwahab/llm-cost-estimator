@@ -335,7 +335,17 @@ async function main() {
   assert(typeof ext.deactivate === "function", "deactivate should be exported");
 
   const subscriptions = [];
-  ext.activate({ subscriptions });
+  const globalState = {
+    _store: {},
+    get(k) {
+      return this._store[k];
+    },
+    update(k, v) {
+      this._store[k] = v;
+      return Promise.resolve();
+    },
+  };
+  ext.activate({ subscriptions, globalState });
 
   // Commands + providers registered.
   for (const id of [
@@ -348,6 +358,7 @@ async function main() {
     "llmCostEstimator.copyComparison",
     "llmCostEstimator.showLastBreakdown",
     "llmCostEstimator.resetSessionTotal",
+    "llmCostEstimator.refreshPricing",
   ]) {
     assert(registeredCommands.has(id), `command ${id} should be registered`);
   }
@@ -478,6 +489,33 @@ async function main() {
     );
   }
 
+  // --- Refresh pricing (live pricing) with a stubbed fetch ---
+  {
+    const realFetch = globalThis.fetch;
+    globalThis.fetch = async () => ({
+      ok: true,
+      json: async () => ({
+        "gpt-4o": {
+          input_cost_per_token: 0.000005,
+          output_cost_per_token: 0.00002,
+          max_input_tokens: 128000,
+        },
+      }),
+    });
+    messages.length = 0;
+    await registeredCommands.get("llmCostEstimator.refreshPricing")();
+    globalThis.fetch = realFetch;
+
+    const cache = globalState._store["llmCostEstimator.livePricing"];
+    assert(cache?.overrides?.["gpt-4o"], "refresh should cache a gpt-4o override");
+    assert(
+      Math.abs(cache.overrides["gpt-4o"].inputPer1M - 5) < 1e-6,
+      `gpt-4o live input price should be $5/1M, got ${cache.overrides["gpt-4o"].inputPer1M}`,
+    );
+    assert(messages.some(([, m]) => /refreshed pricing/i.test(m)), "refresh should notify");
+    console.log("  refresh pricing: gpt-4o ->", cache.overrides["gpt-4o"].inputPer1M, "$/1M (live)");
+  }
+
   // --- Live status bar on selection change (debounced) ---
   {
     const text = "Write a haiku about software bugs and debugging late at night.";
@@ -501,7 +539,7 @@ async function main() {
   ext.deactivate();
   console.log(
     "\n✓ e2e passed: commands, hover, codelens, comparison panel, custom models, workspace scan,",
-    "copy-as-markdown, clipboard, selectModels, live status bar",
+    "copy-as-markdown, clipboard, selectModels, refresh pricing, live status bar",
   );
 }
 

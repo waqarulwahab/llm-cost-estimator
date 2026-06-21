@@ -6,8 +6,9 @@
       "provider": "openai",
       "encoding": "o200k_base",
       "inputPer1M": 2.5,
-      "outputPer1M": 10.0,
-      "contextWindow": 128000
+      "outputPer1M": 10,
+      "contextWindow": 128000,
+      "liveId": "gpt-4o"
     },
     "gpt-4o-mini": {
       "label": "GPT-4o mini",
@@ -15,15 +16,17 @@
       "encoding": "o200k_base",
       "inputPer1M": 0.15,
       "outputPer1M": 0.6,
-      "contextWindow": 128000
+      "contextWindow": 128000,
+      "liveId": "gpt-4o-mini"
     },
     "gpt-4.1": {
       "label": "GPT-4.1",
       "provider": "openai",
       "encoding": "o200k_base",
-      "inputPer1M": 2.0,
-      "outputPer1M": 8.0,
-      "contextWindow": 1000000
+      "inputPer1M": 2,
+      "outputPer1M": 8,
+      "contextWindow": 1000000,
+      "liveId": "gpt-4.1"
     },
     "gpt-4.1-mini": {
       "label": "GPT-4.1 mini",
@@ -31,7 +34,8 @@
       "encoding": "o200k_base",
       "inputPer1M": 0.4,
       "outputPer1M": 1.6,
-      "contextWindow": 1000000
+      "contextWindow": 1000000,
+      "liveId": "gpt-4.1-mini"
     },
     "gpt-4.1-nano": {
       "label": "GPT-4.1 nano",
@@ -39,15 +43,17 @@
       "encoding": "o200k_base",
       "inputPer1M": 0.1,
       "outputPer1M": 0.4,
-      "contextWindow": 1000000
+      "contextWindow": 1000000,
+      "liveId": "gpt-4.1-nano"
     },
     "o3": {
       "label": "OpenAI o3",
       "provider": "openai",
       "encoding": "o200k_base",
-      "inputPer1M": 2.0,
-      "outputPer1M": 8.0,
-      "contextWindow": 200000
+      "inputPer1M": 2,
+      "outputPer1M": 8,
+      "contextWindow": 200000,
+      "liveId": "o3"
     },
     "o4-mini": {
       "label": "OpenAI o4-mini",
@@ -55,23 +61,26 @@
       "encoding": "o200k_base",
       "inputPer1M": 1.1,
       "outputPer1M": 4.4,
-      "contextWindow": 200000
+      "contextWindow": 200000,
+      "liveId": "o4-mini"
     },
     "gpt-4-turbo": {
       "label": "GPT-4 Turbo",
       "provider": "openai",
       "encoding": "cl100k_base",
-      "inputPer1M": 10.0,
-      "outputPer1M": 30.0,
-      "contextWindow": 128000
+      "inputPer1M": 10,
+      "outputPer1M": 30,
+      "contextWindow": 128000,
+      "liveId": "gpt-4-turbo"
     },
     "gpt-4": {
       "label": "GPT-4",
       "provider": "openai",
       "encoding": "cl100k_base",
-      "inputPer1M": 30.0,
-      "outputPer1M": 60.0,
-      "contextWindow": 8192
+      "inputPer1M": 30,
+      "outputPer1M": 60,
+      "contextWindow": 8192,
+      "liveId": "gpt-4"
     },
     "gpt-3.5-turbo": {
       "label": "GPT-3.5 Turbo",
@@ -79,63 +88,69 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.5,
       "outputPer1M": 1.5,
-      "contextWindow": 16385
+      "contextWindow": 16385,
+      "liveId": "gpt-3.5-turbo"
     },
     "claude-opus": {
       "label": "Claude Opus 4",
       "provider": "anthropic",
       "encoding": "cl100k_base",
-      "inputPer1M": 15.0,
-      "outputPer1M": 75.0,
-      "contextWindow": 200000
+      "inputPer1M": 15,
+      "outputPer1M": 75,
+      "contextWindow": 200000,
+      "liveId": "claude-opus-4-20250514"
     },
     "claude-sonnet": {
       "label": "Claude Sonnet 4",
       "provider": "anthropic",
       "encoding": "cl100k_base",
-      "inputPer1M": 3.0,
-      "outputPer1M": 15.0,
-      "contextWindow": 200000
+      "inputPer1M": 3,
+      "outputPer1M": 15,
+      "contextWindow": 200000,
+      "liveId": "claude-sonnet-4-20250514"
     },
     "claude-haiku": {
       "label": "Claude Haiku 3.5",
       "provider": "anthropic",
       "encoding": "cl100k_base",
       "inputPer1M": 0.8,
-      "outputPer1M": 4.0,
+      "outputPer1M": 4,
       "contextWindow": 200000
     },
     "claude-3.7-sonnet": {
       "label": "Claude 3.7 Sonnet",
       "provider": "anthropic",
       "encoding": "cl100k_base",
-      "inputPer1M": 3.0,
-      "outputPer1M": 15.0,
-      "contextWindow": 200000
+      "inputPer1M": 3,
+      "outputPer1M": 15,
+      "contextWindow": 200000,
+      "liveId": "claude-3-7-sonnet-20250219"
     },
     "claude-3.5-sonnet": {
       "label": "Claude 3.5 Sonnet",
       "provider": "anthropic",
       "encoding": "cl100k_base",
-      "inputPer1M": 3.0,
-      "outputPer1M": 15.0,
+      "inputPer1M": 3,
+      "outputPer1M": 15,
       "contextWindow": 200000
     },
     "claude-3-opus": {
       "label": "Claude 3 Opus",
       "provider": "anthropic",
       "encoding": "cl100k_base",
-      "inputPer1M": 15.0,
-      "outputPer1M": 75.0,
-      "contextWindow": 200000
+      "inputPer1M": 15,
+      "outputPer1M": 75,
+      "contextWindow": 200000,
+      "liveId": "claude-3-opus-20240229"
     },
     "gemini-2.5-pro": {
       "label": "Gemini 2.5 Pro",
       "provider": "google",
       "encoding": "cl100k_base",
       "inputPer1M": 1.25,
-      "outputPer1M": 10.0,
-      "contextWindow": 1048576
+      "outputPer1M": 10,
+      "contextWindow": 1048576,
+      "liveId": "gemini-2.5-pro"
     },
     "gemini-2.5-flash": {
       "label": "Gemini 2.5 Flash",
@@ -143,7 +158,8 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.3,
       "outputPer1M": 2.5,
-      "contextWindow": 1048576
+      "contextWindow": 1048576,
+      "liveId": "gemini-2.5-flash"
     },
     "gemini-2.0-flash": {
       "label": "Gemini 2.0 Flash",
@@ -151,14 +167,15 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.1,
       "outputPer1M": 0.4,
-      "contextWindow": 1048576
+      "contextWindow": 1048576,
+      "liveId": "gemini-2.0-flash"
     },
     "gemini-1.5-pro": {
       "label": "Gemini 1.5 Pro",
       "provider": "google",
       "encoding": "cl100k_base",
       "inputPer1M": 1.25,
-      "outputPer1M": 5.0,
+      "outputPer1M": 5,
       "contextWindow": 2097152
     },
     "gemini-1.5-flash": {
@@ -175,7 +192,8 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.27,
       "outputPer1M": 1.1,
-      "contextWindow": 128000
+      "contextWindow": 128000,
+      "liveId": "deepseek-chat"
     },
     "deepseek-reasoner": {
       "label": "DeepSeek-R1 (reasoner)",
@@ -183,15 +201,17 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.55,
       "outputPer1M": 2.19,
-      "contextWindow": 128000
+      "contextWindow": 128000,
+      "liveId": "deepseek-reasoner"
     },
     "mistral-large": {
       "label": "Mistral Large",
       "provider": "mistral",
       "encoding": "cl100k_base",
-      "inputPer1M": 2.0,
-      "outputPer1M": 6.0,
-      "contextWindow": 128000
+      "inputPer1M": 2,
+      "outputPer1M": 6,
+      "contextWindow": 128000,
+      "liveId": "mistral/mistral-large-latest"
     },
     "mistral-small": {
       "label": "Mistral Small",
@@ -199,7 +219,8 @@
       "encoding": "cl100k_base",
       "inputPer1M": 0.2,
       "outputPer1M": 0.6,
-      "contextWindow": 32000
+      "contextWindow": 32000,
+      "liveId": "mistral/mistral-small-latest"
     },
     "llama-3.3-70b": {
       "label": "Llama 3.3 70B",
@@ -213,17 +234,18 @@
       "label": "Llama 3.1 405B",
       "provider": "meta",
       "encoding": "cl100k_base",
-      "inputPer1M": 3.0,
-      "outputPer1M": 3.0,
+      "inputPer1M": 3,
+      "outputPer1M": 3,
       "contextWindow": 128000
     },
     "grok-2": {
       "label": "Grok 2",
       "provider": "xai",
       "encoding": "cl100k_base",
-      "inputPer1M": 2.0,
-      "outputPer1M": 10.0,
-      "contextWindow": 131072
+      "inputPer1M": 2,
+      "outputPer1M": 10,
+      "contextWindow": 131072,
+      "liveId": "xai/grok-2"
     }
   }
 }

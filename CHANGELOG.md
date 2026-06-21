@@ -4,6 +4,19 @@ All notable changes to this extension are documented here. This project follows
 [Semantic Versioning](https://semver.org/) and the
 [Keep a Changelog](https://keepachangelog.com/) format.
 
+## [0.3.2] - 2026-06-21
+
+### Added
+
+- **Live pricing** — **LLM Cost: Refresh Pricing from the Web** pulls current
+  prices from a maintained source (LiteLLM by default) and caches them, so the
+  bundled placeholders can be kept current. Models are matched by a new `liveId`
+  field in `pricing.json` (22 of the catalog mapped); the rest keep bundled
+  prices. New settings: `llmCostEstimator.refreshPricingOnStartup` and
+  `llmCostEstimator.pricingSourceUrl`. User `customModels` still win.
+- Pricing precedence is now: bundled defaults → live overrides → user custom
+  models.
+
 ## [0.3.1] - 2026-06-21
 
 Distribution & discovery.
@@ -106,6 +119,7 @@ Initial release — the MVP.
 - **Bundled, editable pricing** in `src/pricing/pricing.json` with a "verify
   prices" note.
 
+[0.3.2]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.3.2
 [0.3.1]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.3.1
 [0.3.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.3.0
 [0.2.0]: https://github.com/waqarulwahab/llm-cost-estimator/releases/tag/v0.2.0
