@@ -6,13 +6,23 @@ const CURRENCY_SYMBOLS: Record<string, string> = {
   CAD: "$",
   AUD: "$",
   NZD: "$",
+  MXN: "MX$",
+  SGD: "S$",
+  HKD: "HK$",
   EUR: "€",
   GBP: "£",
+  CHF: "CHF",
+  SEK: "kr",
+  NOK: "kr",
+  DKK: "kr",
   JPY: "¥",
   CNY: "¥",
   INR: "₹",
   KRW: "₩",
   BRL: "R$",
+  ZAR: "R",
+  AED: "د.إ",
+  PKR: "₨",
 };
 
 /** Returns the symbol for a currency code, or "" if unknown. */
